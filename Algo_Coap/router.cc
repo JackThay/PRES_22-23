@@ -19,13 +19,13 @@ void Router::handleMessage(cMessage *msg)
         delete msg;
     } else {
         // forward data packet or acknowledgment depending on packet name
-        if (strcmp("data",msg->getName()) == 0){
+        if (strcmp("CON",msg->getName()) == 0){
             EV << "Forward data packet...\n";
             if (queue.size() < queue_size) {
                 queue.push(msg);
             } else {
-                EV << "Queue full. Drop packet.\n";
-                bubble("packet dropped by queue");
+                EV << "Queue full. Dropping packet.\n";
+                bubble("Packet dropped by queue");
                 delete msg;
             }
         } else {

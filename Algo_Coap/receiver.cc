@@ -18,8 +18,8 @@ void Receiver::initialize()
 void Receiver::handleMessage(cMessage *msg)
 {
     if (msg == finTraitement){
-        cMessage *ack = new cMessage("ack"); // Create an ack message
-        send (ack,"out"); // Send the ack message
+        cMessage *ack = new cMessage("ACK"); // Create an ACK message
+        send (ack,"out"); // Send the ACK message
     }else{
         if(!finTraitement -> isScheduled()){ // If processing is not already in progress
             EV << "Receive a message.\n"; // Print a message to the simulation log

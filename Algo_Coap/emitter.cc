@@ -1,4 +1,5 @@
 #include "emitter.h"
+#include <string>
 
 // register the module with OMNeT++
 Define_Module(Emitter);
@@ -21,7 +22,7 @@ void Emitter::initialize()
     // create a message to send
     timeoutEvent = new cMessage ("timeoutEvent");
     // create a message to send
-    cMessage *data = new cMessage("data");
+    cMessage *data = new cMessage("CON");
     // output a log message
     EV << "Send the first packet. \n";
     // schedule the message to be sent immediately
@@ -39,7 +40,7 @@ void Emitter::handleMessage(cMessage *msg)
         // output a log message
         EV << "Timeout expired, packet lost.\n";
         // create a new message to send
-        cMessage *data = new cMessage("data");
+        cMessage *data = new cMessage("CON");
         // output a log message
         EV << "Re-send data packet.\n";
         // send the message out
@@ -62,7 +63,7 @@ void Emitter::handleMessage(cMessage *msg)
         // output a log message
         EV << "Send a new data packet.\n";
         // create a new message to send
-        cMessage *data = new cMessage("data");
+        cMessage *data = new cMessage("CON");
         // send the message out
         send(data,"out");
         // record the time the packet was sent
