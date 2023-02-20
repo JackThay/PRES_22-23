@@ -31,6 +31,7 @@ void Emitter::handleMessage(cMessage *msg) // function to handle incoming messag
     }
 
     numAcksReceived++; // increment the number of acknowledgements received
+    EV << "Number of ack received " << numAcksReceived << endl;
 
     if (cwnd < ssthresh) { // if the congestion window is less than the slow start threshold
         cwnd++; // increase the congestion window size by 1
@@ -48,6 +49,7 @@ void Emitter::sendPacket()  // function to send a packet
     cPacket *pkt = new cPacket("data"); // create a new packet with the name "data"
     send(pkt, "out"); // send the packet out of the module's output gate
     numPacketsSent++; // increment the number of packets sent
+    EV << "Number of packet sent " << numPacketsSent << endl;
 
     scheduleAt(simTime() + timeout, new cMessage("retransmission")); // schedule a retransmission timer
 }
