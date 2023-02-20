@@ -11,6 +11,7 @@ class Emitter : public cSimpleModule  // define a new class called "Emitter" tha
         cMessage *timeoutEvent;  // pointer to a message object that will be used to trigger a timeout event
         double timeout;  // the length of the timeout interval in seconds
         double rtt, t1, t2;  // variables used to compute the round-trip time of the network
+        int counter;
 
     public:
         Emitter();  // default constructor for the Emitter class

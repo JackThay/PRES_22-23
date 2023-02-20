@@ -31,6 +31,7 @@ void Emitter::initialize()
     t1 = simTime().dbl();
     // schedule a timeout event
     scheduleAt(simTime() + timeout, timeoutEvent);
+    counter = 0;
 }
 
 void Emitter::handleMessage(cMessage *msg)
@@ -51,7 +52,8 @@ void Emitter::handleMessage(cMessage *msg)
     // if the message is not the timeout event
     else{
         // output a log message
-        EV << "Receive " << msg->getName() << std::endl;
+        EV << "Receive CON " << counter << std::endl;
+        counter++;
         // cancel the timeout event
         cancelEvent(timeoutEvent);
         // record the time the packet was received
