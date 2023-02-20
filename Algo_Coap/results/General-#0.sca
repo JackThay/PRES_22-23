@@ -1,8 +1,8 @@
 version 3
-run General-0-20230220-11:01:54-9644
+run General-0-20230220-20:13:52-11836
 attr configname General
-attr datetime 20230220-11:01:54
-attr datetimef 20230220-110154
+attr datetime 20230220-20:13:52
+attr datetimef 20230220-201352
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -10,7 +10,7 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Reseau
-attr processid 9644
+attr processid 11836
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -43,12 +43,12 @@ par Reseau.router.out_r.channel delay 0.1s
 attr mutable ""
 attr unit s
 par Reseau.emitter typename "\"Emitter\""
-par Reseau.emitter timeout 2s
+par Reseau.emitter timeout 1s
 attr unit s
 par Reseau.receiver typename "\"Receiver\""
 par Reseau.receiver delai 0
 par Reseau.router typename "\"Router\""
-par Reseau.router dropping_probability 0.1s
-attr unit s
+par Reseau.router dropping_probability 0.1
+par Reseau.router queue_size 0
 par Reseau typename "\"Reseau\""
 

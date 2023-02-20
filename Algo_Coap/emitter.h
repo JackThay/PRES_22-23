@@ -1,24 +1,24 @@
-#ifndef __ALGO_COAP_EMITTER_H_
+#ifndef __ALGO_COAP_EMITTER_H_  // header guards, to avoid multiple inclusion of this header
 #define __ALGO_COAP_EMITTER_H_
 
-#include <omnetpp.h>
+#include <omnetpp.h>  // include the OMNeT++ header file
 
-using namespace omnetpp;
+using namespace omnetpp;  // use the OMNeT++ namespace
 
-class Emitter : public cSimpleModule
+class Emitter : public cSimpleModule  // define a new class called "Emitter" that inherits from the OMNeT++ class "cSimpleModule"
 {
     private:
-        cMessage *timeoutEvent;
-        double timeout;
-        double rtt, t1, t2;
+        cMessage *timeoutEvent;  // pointer to a message object that will be used to trigger a timeout event
+        double timeout;  // the length of the timeout interval in seconds
+        double rtt, t1, t2;  // variables used to compute the round-trip time of the network
 
     public:
-        Emitter();
-        virtual ~Emitter();
+        Emitter();  // default constructor for the Emitter class
+        virtual ~Emitter();  // virtual destructor for the Emitter class
 
     protected:
-        virtual void initialize() override;
-        virtual void handleMessage(cMessage *msg) override;
+        virtual void initialize() override;  // override the initialize() method of cSimpleModule
+        virtual void handleMessage(cMessage *msg) override;  // override the handleMessage() method of cSimpleModule
 };
 
-#endif
+#endif  // end of header guards
