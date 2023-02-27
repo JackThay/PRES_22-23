@@ -57,7 +57,7 @@ void Emitter::handleMessage(cMessage *msg)
         // incrementing sequence number
         currentSeq = ++currentSeq;
         // using new sequence number
-        conPacket->setNid(currentSeq);
+        conPacket->setNseq(currentSeq);
         // output a log message
         EV << "Re-sending CON packet, ID: " << conPacket->getNid() << " SeqN: " << conPacket->getNseq() << std::endl;
         // send the message out
