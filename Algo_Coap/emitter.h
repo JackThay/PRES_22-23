@@ -2,6 +2,10 @@
 #define __ALGO_COAP_EMITTER_H_
 
 #include <omnetpp.h>  // include the OMNeT++ header file
+#include <cstdlib> // needed to generate random number
+#include <iostream>
+#include <time.h>
+#include "Packet_m.h"
 
 using namespace omnetpp;  // use the OMNeT++ namespace
 
@@ -11,7 +15,7 @@ class Emitter : public cSimpleModule  // define a new class called "Emitter" tha
         cMessage *timeoutEvent;  // pointer to a message object that will be used to trigger a timeout event
         double timeout;  // the length of the timeout interval in seconds
         double rtt, t1, t2;  // variables used to compute the round-trip time of the network
-        int counter;
+        int currentSeq;
 
     public:
         Emitter();  // default constructor for the Emitter class

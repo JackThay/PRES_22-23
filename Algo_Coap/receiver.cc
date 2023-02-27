@@ -2,11 +2,15 @@
 
 Define_Module(Receiver); // Register the module with OMNeT++
 
-Receiver::Receiver(){
+// Constructor
+Receiver::Receiver()
+{
     finTraitement = NULL; // Initialize the flag pointer to null
 }
 
-Receiver::~Receiver(){
+// Destructor
+Receiver::~Receiver()
+{
     cancelAndDelete(finTraitement); // Cancel and delete the flag when the simulation ends
 }
 
@@ -17,18 +21,41 @@ void Receiver::initialize()
 
 void Receiver::handleMessage(cMessage *msg)
 {
-    if (msg == finTraitement){
-        cMessage *ack = new cMessage("ACK"); // Create an ACK message
-        send (ack,"out"); // Send the ACK message
-    }else{
-        if(!finTraitement -> isScheduled()){ // If processing is not already in progress
-            EV << "Receive a message.\n"; // Print a message to the simulation log
-            delta = par("delai"); // Get the processing delay from the module parameter
-            EV << "Current processing delay = " << delta << std::endl; // Print the processing delay to the simulation log
-            scheduleAt(simTime() + delta, finTraitement); // Schedule the processing to be completed after the specified delay
-            delete msg; // Delete the incoming message since it has been received and processed
-        }else{
-            delete msg; // Delete the incoming message if processing is already in progress
+    if (msg == finTraitement)
+    {
+        // creating a message ACK from the received CON
+        Packet *ackPacket = new Packet("ACK");
+        // re-using current sequence number
+        ackPacket->setNseq(useSeq);
+        // output a log message
+        send (ackPacket,"out"); // Send the ACK message
+        // output a log message
+        EV << "Sending ACK packet, seqN: " << ackPacket->getNseq() << std::endl;
+    }
+    else
+    {
+        // If processing is not already in progress
+        if(!finTraitement -> isScheduled())
+        {
+            // receiving CON packet
+            Packet *conPacket = check_and_cast<Packet *> (msg);
+            // registering seqN from CON packet into useSeq
+            useSeq = conPacket->getNseq();
+            // output a log message
+            EV << "Receiving CON packet, seqN: " << conPacket->getNseq() << std::endl;
+            // Get the processing delay from the module parameter
+            delta = par("delai");
+            // Print the processing delay to the simulation log
+            EV << "Current processing delay = " << delta << std::endl;
+            // Schedule the processing to be completed after the specified delay
+            scheduleAt(simTime() + delta, finTraitement);
+            // Delete the incoming message since it has been received and processed
+            delete msg;
+        }
+        else
+        {
+            // Delete the incoming message if processing is already in progress
+            delete msg;
         }
     }
 }

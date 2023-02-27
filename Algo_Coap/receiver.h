@@ -4,6 +4,7 @@
 
 // Include the OMNeT++ library
 #include <omnetpp.h>
+#include "Packet_m.h"
 
 // Use the OMNeT++ namespace
 using namespace omnetpp;
@@ -14,6 +15,7 @@ class Receiver : public cSimpleModule
     private:
         cMessage *finTraitement;    // Pointer to a message used for scheduling the end of processing
         simtime_t delta;            // The delay for processing a message
+        int useSeq; // memorizing seqN from incoming data packet
 
     public:
         Receiver();                 // Constructor
