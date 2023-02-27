@@ -23,5 +23,6 @@ Instruction pour installer le projet:
 
 ### TO DO:
 A faire, dans l'immédiat:
+- Utiliser un numéro d'identifiant pour les paquets (autre que le numéro de séquence)
 - Créer plusieurs port d'entrée et de sortie dans le routeur
 - Utiliser un temps aléatoire pour l'envoi ou le renvoi des paquets conformément à la RFC CoAP: https://www.rfc-editor.org/rfc/rfc7252
