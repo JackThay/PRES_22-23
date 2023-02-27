@@ -19,18 +19,22 @@ void Emitter::initialize()
 {
     // Use current time as seed for the random number generator
     srand(time(0));
-    // Initializing current sequence with a random number
-    currentSeq = rand();
+    // Initializing current ID with a random number
+    currentID = rand();
+    // Initializing current sequence number to 0
+    currentSeq = 0;
     // get the timeout value from the NED file
     timeout = par("timeout");
     // create a message to send
     timeoutEvent = new cMessage ("timeoutEvent");
     // create a message to send
     Packet *initPacket = new Packet("INIT");
+    // setting ID number for INIT packet
+    initPacket->setNid(currentID);
     // setting sequence number for INIT packet
-    initPacket->setNseq(currentSeq); // should be 0 if nothing went wrong
+    initPacket->setNseq(currentSeq);
     // output a log message
-    EV << "Sending out INIT packet, seqN: " << initPacket->getNseq() << std::endl;
+    EV << "Sending out INIT packet, ID: " << initPacket->getNid() << " SeqN: " << initPacket->getNseq() << std::endl;
     // schedule the message to be sent immediately
     scheduleAt(simTime(),initPacket);
     // record the time the packet was sent
@@ -48,10 +52,14 @@ void Emitter::handleMessage(cMessage *msg)
         EV << "Timeout expired, CON packet is probably lost.\n";
         // create a new message to re-send
         Packet *conPacket = new Packet("CON");
-        // re-using current sequence number
-        conPacket->setNseq(currentSeq);
+        // re-using current ID number
+        conPacket->setNid(currentID);
+        // incrementing sequence number
+        currentSeq = ++currentSeq;
+        // using new sequence number
+        conPacket->setNid(currentSeq);
         // output a log message
-        EV << "Re-sending CON packet, seqN: " << conPacket->getNseq() << std::endl;
+        EV << "Re-sending CON packet, ID: " << conPacket->getNid() << " SeqN: " << conPacket->getNseq() << std::endl;
         // send the message out
         send(conPacket, "out");
         // schedule a new timeout event
@@ -62,51 +70,93 @@ void Emitter::handleMessage(cMessage *msg)
     {
         // receiving ACK Packet
         Packet *ackPacket = check_and_cast<Packet *>(msg);
-        // if seqN from ackPacket is the same with current seqN
-        if (currentSeq == ackPacket->getNseq())
+        // if ID from ackPacket is the same with current ID
+        if (currentID == ackPacket->getNid())
         {
             // output a log message
-            EV << "Receiving " << msg->getName() << " packet, seqN: " << ackPacket->getNseq() << std::endl;
+            EV << "Receiving " << msg->getName() << " packet, ID: " << ackPacket->getNid() << " SeqN: " << ackPacket->getNseq() << std::endl;
             // output confirmation message
-            EV << "SeqN from " << msg->getName() << " packet: OK" << std::endl;
-            // canceling the timeout event
-            cancelEvent(timeoutEvent);
-            // record the time the packet was received
-            t2 = simTime().dbl();
-            // calculate the round trip time
-            rtt = t2 - t1;
-            // delete the message
-            delete msg;
-            // create a new message to send
-            Packet *conPacket = new Packet("CON");
-            // incrementing current sequence number
-            currentSeq = ++currentSeq;
-            // setting conPacket with the new current sequence number
-            conPacket->setNseq(currentSeq);
-            // output a log message
-            EV << "Sending a new CON packet, seqN: " << conPacket->getNseq() << std::endl;
-            // send the message out
-            send(conPacket,"out");
-            // record the time the packet was sent
-            t1 = simTime().dbl();
-            // schedule a new timeout event
-            scheduleAt(simTime()+ timeout, timeoutEvent);
+            EV << "ID from " << msg->getName() << " packet: OK" << std::endl;
+            // if sequence from ackPacket is the same with current sequence
+            if (currentSeq == ackPacket->getNseq())
+            {
+                // output confirmation message
+                EV << "SeqN from " << msg->getName() << " packet: OK" << std::endl;
+                // displaying bubble
+                bubble("ID and SeqN: OK!");
+                // canceling the timeout event
+                cancelEvent(timeoutEvent);
+                // record the time the packet was received
+                t2 = simTime().dbl();
+                // calculate the round trip time
+                rtt = t2 - t1;
+                // delete the message
+                delete msg;
+                // create a new message to send
+                Packet *conPacket = new Packet("CON");
+                // incrementing current ID number
+                currentID = ++currentID;
+                // resetting sequence number
+                currentSeq = 0;
+                // setting conPacket with the new current ID number
+                conPacket->setNid(currentID);
+                // setting conPacket with the new current sequence number
+                conPacket->setNseq(currentSeq);
+                // output a log message
+                EV << "Sending a new CON packet, ID: " << conPacket->getNid() << " SeqN: " << conPacket->getNseq() << std::endl;
+                // send the message out
+                send(conPacket,"out");
+                // record the time the packet was sent
+                t1 = simTime().dbl();
+                // schedule a new timeout event
+                scheduleAt(simTime()+ timeout, timeoutEvent);
+            }
+
+            else
+            {
+                EV << "SeqN from " << msg->getName() << " packet: WRONG, previous CON packet is probably lost" << std::endl;
+                // displaying bubble
+                bubble("SeqN: WRONG!");
+                // canceling the timeout event
+                cancelEvent(timeoutEvent);
+                // create a new message to re-send
+                Packet *conPacket = new Packet("CON");
+                // re-using current ID number
+                conPacket->setNid(currentID);
+                // incrementing sequence number
+                currentSeq = ++currentSeq;
+                // using new sequence number
+                conPacket->setNseq(currentSeq);
+                // output a log message
+                EV << "Re-sending CON packet, ID: " << conPacket->getNid() << " SeqN: " << conPacket->getNseq() << std::endl;
+                // send the message out
+                send(conPacket, "out");
+                // schedule a new timeout event
+                scheduleAt(simTime()+ timeout, timeoutEvent);
+            }
         }
-        // if seqN from ackPacket is NOT the same with current seqN
+        // if ID from ackPacket is NOT the same with current ID
         else
         {
             // output a log message
-            EV << "Receiving " << msg->getName() << " packet, seqN: " << ackPacket->getNseq() << std::endl;
+            EV << "Receiving " << msg->getName() << " packet, ID: " << ackPacket->getNid() << std::endl;
             // output confirmation message
-            EV << "SeqN from " << msg->getName() << " packet: WRONG, previous CON packet is probably lost" << std::endl;
+            EV << "ID from " << msg->getName() << " packet: WRONG, previous CON packet is probably lost" << std::endl;
+            // displaying bubble
+            bubble("ID : WRONG!");
             // canceling the timeout event
             cancelEvent(timeoutEvent);
             // create a new message to re-send
+            // create a new message to re-send
             Packet *conPacket = new Packet("CON");
-            // re-using current sequence number
-            conPacket->setNseq(currentSeq);
+            // re-using current ID number
+            conPacket->setNid(currentID);
+            // incrementing sequence number
+            currentSeq = ++currentSeq;
+            // using new sequence number
+            conPacket->setNid(currentSeq);
             // output a log message
-            EV << "Re-sending CON packet, seqN: " << conPacket->getNseq() << std::endl;
+            EV << "Re-sending CON packet, ID: " << conPacket->getNid() << " SeqN: " << conPacket->getNseq() << std::endl;
             // send the message out
             send(conPacket, "out");
             // schedule a new timeout event

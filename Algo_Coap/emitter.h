@@ -16,6 +16,7 @@ class Emitter : public cSimpleModule  // define a new class called "Emitter" tha
         double timeout;  // the length of the timeout interval in seconds
         double rtt, t1, t2;  // variables used to compute the round-trip time of the network
         int currentSeq;
+        int currentID;
 
     public:
         Emitter();  // default constructor for the Emitter class

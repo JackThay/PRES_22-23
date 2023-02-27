@@ -25,12 +25,14 @@ void Receiver::handleMessage(cMessage *msg)
     {
         // creating a message ACK from the received CON
         Packet *ackPacket = new Packet("ACK");
+        // re-using current ID number
+        ackPacket->setNid(useID);
         // re-using current sequence number
-        ackPacket->setNseq(useSeq);
+        ackPacket->setNseq(7777);
         // output a log message
         send (ackPacket,"out"); // Send the ACK message
         // output a log message
-        EV << "Sending ACK packet, seqN: " << ackPacket->getNseq() << std::endl;
+        EV << "Sending ACK packet, ID: " << ackPacket->getNid() << " SeqN: " << ackPacket->getNseq() << std::endl;
     }
     else
     {
@@ -39,10 +41,14 @@ void Receiver::handleMessage(cMessage *msg)
         {
             // receiving CON packet
             Packet *conPacket = check_and_cast<Packet *> (msg);
-            // registering seqN from CON packet into useSeq
+            // registering ID from CON packet into use
+            useID = conPacket->getNid();
+            // registering sequence from CON packet into use
             useSeq = conPacket->getNseq();
             // output a log message
-            EV << "Receiving CON packet, seqN: " << conPacket->getNseq() << std::endl;
+            EV << "Receiving CON packet, ID: " << conPacket->getNid() << " SeqN: " << conPacket->getNseq() << std::endl;
+            // displaying bubble
+            bubble("CON received!");
             // Get the processing delay from the module parameter
             delta = par("delai");
             // Print the processing delay to the simulation log
