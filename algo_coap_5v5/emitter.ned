@@ -3,8 +3,8 @@ simple Emitter
     // Declaration of parameters
     parameters:
         double timeout @unit(s);
-        // Declaration of display string for visualization
-        @display("i=device/pocketpc");
+    // Declaration of display string for visualization
+    @display("i=device/pc");
     // Declaration of input and output gates
     gates:
         input in;

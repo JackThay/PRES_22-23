@@ -1,6 +1,6 @@
 // Include guard to prevent multiple inclusions of this header file
-#ifndef __ALGO_COAP_5v5_RECEIVER_H_
-#define __ALGO_COAP_5v5_RECEIVER_H_
+#ifndef __ALGO_COAP_RECEIVER_H_
+#define __ALGO_COAP_RECEIVER_H_
 
 // Include the OMNeT++ library
 #include <omnetpp.h>
@@ -15,7 +15,6 @@ class Receiver : public cSimpleModule
     private:
         cMessage *finTraitement;    // Pointer to a message used for scheduling the end of processing
         simtime_t delta;            // The delay for processing a message
-        int useSeq; // memorizing seqN from incoming CON packet
         int useID; // memorizing ID number from incoming CON packet
 
     public:
