@@ -23,5 +23,5 @@ Instruction pour installer le projet:
 
 ### TO DO:
 A faire, dans l'immédiat:
-- Créer plusieurs port d'entrée et de sortie dans le routeur
+- Mesurer la vitesse de téléchargement
 - Utiliser un temps aléatoire pour l'envoi ou le renvoi des paquets conformément à la RFC CoAP: https://www.rfc-editor.org/rfc/rfc7252
