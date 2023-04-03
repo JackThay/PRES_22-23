@@ -16,7 +16,6 @@ class Emitter : public cSimpleModule  // define a new class called "Emitter" tha
     private:
         cMessage *timeoutEvent;  // pointer to a message object that will be used to trigger a timeout event
         cMessage *initEvent;
-        double timeout;  // the length of the timeout interval in seconds
         double rtt, t1, t2;  // variables used to compute the round-trip time of the network
         double ACK_TIMEOUT; // value for an ACK timeout
         double ACK_RANDOM_FACTOR; // value for random factor

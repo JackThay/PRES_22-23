@@ -17,164 +17,109 @@ Emitter::~Emitter(){
 // called at the beginning of the simulation
 void Emitter::initialize()
 {
-    // Use current time as seed for the random number generator
-    srand(time(0));
-    // Initializing current ID with a random number
-    currentID = rand();
-    // default value for ACK timeout
-    ACK_TIMEOUT = 2;
-    // default value for random factor
-    ACK_RANDOM_FACTOR = 1.5;
-    // default value for retransmission
-    MAX_RETRANSMIT = 4;
-    // initializing initial timeout
-    initTimeout = 0;
-    // initializing retransmission counter
-    retransmissionCounter = 0;
-    // get the timeout value from the NED file
-    timeout = par("timeout");
-    // create a message to send
-    timeoutEvent = new cMessage ("timeoutEvent");
-    // create a initial message to send
-    initEvent = new cMessage("initEvent");
-    // schedule the message to be sent immediately
-    scheduleAt(simTime(),initEvent);
+    srand(time(0)); // Use current time as seed for the random number generator
+    currentID = rand(); // Initializing current ID with a random number
+    ACK_TIMEOUT = 2; // default value for ACK timeout
+    ACK_RANDOM_FACTOR = 1.5; // default value for random factor
+    MAX_RETRANSMIT = 4; // default value for retransmission
+    initTimeout = 0; // initializing initial timeout
+    retransmissionCounter = 0; // initializing retransmission counter
+    initEvent = new cMessage("initEvent"); // create a initial message to send
+    scheduleAt(simTime(),initEvent); // schedule the message to be sent immediately
     // record the time the packet was sent
     //t1 = simTime().dbl();
-    // schedule a timeout event
-    //scheduleAt(simTime() + timeout, timeoutEvent);
 }
 
 void Emitter::handleMessage(cMessage *msg)
 {
-    // if the message is the timeout event
-    if(msg == timeoutEvent)
+    if (msg == initEvent) // if the message is the initial event
     {
-        // output a log message
-        EV << "Timeout expired, CON packet is probably lost.\n";
-        // incrementing retransmission counter
-        retransmissionCounter = ++ retransmissionCounter;
-        // if transmission is less or equal than 4
-        if (retransmissionCounter<=MAX_RETRANSMIT)
-        {
-            // create a new message to re-send
-            Packet *conPacket = new Packet("CON");
-            // re-using current ID number
-            conPacket->setNid(currentID);
-            // output a log message
-            EV << "Re-sending CON packet, ID: " << conPacket->getNid() << std::endl;
-            // send the message out
-            send(conPacket, "out");
-            // doubling timeout
-            initTimeout=initTimeout*2;
-            // output a log message
-            EV << "ACK Timeout is: " << initTimeout << std::endl;
-            // schedule a new timeout event
-            scheduleAt(simTime()+ initTimeout, timeoutEvent);
-        }
-        // if transmission is more than 4
-        else
-        {
-            // output a log message
-            EV << "Retransmission of CON packet, ID: " << currentID << " failed" << std::endl;
-            // create a new message to re-send
-            Packet *conPacket = new Packet("CON");
-            // incrementing current ID number
-            currentID = ++currentID;
-            // using current ID number
-            conPacket->setNid(currentID);
-            // output a log message
-            EV << "Sending next CON packet, ID: " << conPacket->getNid() << std::endl;
-            // send the message out
-            send(conPacket, "out");
-            // resetting retransmission counter
-            retransmissionCounter=0;
-            //double upperBound=ACK_TIMEOUT*ACK_RANDOM_FACTOR;
-            //double lowerBound=ACK_TIMEOUT;
-            // initTimeout= rand() % (upperBound - lowerBound + 1.0) + lowerBound;
-            initTimeout=2;
-            // schedule a new timeout event
-            scheduleAt(simTime()+ initTimeout, timeoutEvent);
-        }
+        EV << "Emitter initialized" << std::endl; // output message
+        Packet *conPacket = new Packet("CON"); // create a new packet to send
+        conPacket->setNid(currentID); // using current ID number
+        send(conPacket, "out"); // send the message out
+        timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
+        EV << "Sending first CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
+        /* ==>>Pour Dorian
+         * J'ai besoin d'un nombre "double" aléatoire entre "ACK_TIMEOUT" et "ACK_TIMEOUT * ACK_RANDOM_FACTOR"
+         * ça devrait donner un truc:
+         * maxTimeout = ACK_TIMEOUT * ACK_RANDOM_FACTOR
+         * randomTimeout = valeur aléatoire entre ACK_TIMEOUT et maxTimeout
+         */
 
+
+        // ==> Pour Dorian, du coup, tu remplace "2" par randomTimeout pour tester
+        initTimeout = 2; // changing initial timeout
+        EV << "ACK Timeout for CON packet, ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
+        scheduleAt(simTime() + initTimeout, timeoutEvent); // schedule a new timeout event
     }
-    else if (msg == initEvent)
+    else if(msg == timeoutEvent) // if the message is the timeout event
     {
-        // canceling the timeout event
-        cancelEvent(timeoutEvent);
-        // output message
-        EV << "Emitter initialized" << std::endl;
-        // create a new packet to send
-        Packet *conPacket = new Packet("CON");
-        // using current ID number
-        conPacket->setNid(currentID);
-        // send the message out
-        send(conPacket, "out");
-        // output a log message
-        EV << "Sending first CON packet, ID: " << conPacket->getNid() << std::endl;
-        // schedule a new timeout event
-        scheduleAt(simTime(), timeoutEvent);
-    }
-    // if the message is not the timeout event
-    else
-    {
-        // receiving ACK Packet
-        Packet *ackPacket = check_and_cast<Packet *>(msg);
-        // if ID from ackPacket is the same with current ID
-        if (currentID == ackPacket->getNid())
+        EV << "Timeout expired, CON packet is probably lost.\n"; // output a log message
+        retransmissionCounter = ++ retransmissionCounter; // incrementing retransmission counter
+        if (retransmissionCounter<=MAX_RETRANSMIT) // if transmission is less or equal than 4
         {
-            // displaying a bubble
-            bubble("ID: OK");
-            // output a log message
-            EV << "Receiving " << msg->getName() << " packet, ID: " << ackPacket->getNid() << std::endl;
-            // output confirmation message
-            EV << "ID from " << msg->getName() << " packet: OK" << std::endl;
-            // canceling the timeout event
-            cancelEvent(timeoutEvent);
-            // record the time the packet was received
-            t2 = simTime().dbl();
-            // calculate the round trip time
-            rtt = t2 - t1;
-            // delete the message
-            delete msg;
-            // create a new message to send
-            Packet *conPacket = new Packet("CON");
-            // incrementing current ID number
-            currentID = ++currentID;
-            // resetting retransmission counter
-            retransmissionCounter = 0;
-            // setting conPacket with the new current ID number
-            conPacket->setNid(currentID);
-            // output a log message
-            EV << "Sending next CON packet, ID: " << conPacket->getNid() << std::endl;
-            // send the message out
-            send(conPacket,"out");
-            // record the time the packet was sent
-            t1 = simTime().dbl();
-            //double upperBound=ACK_TIMEOUT*ACK_RANDOM_FACTOR;
-            //double lowerBound=ACK_TIMEOUT;
-            // initTimeout= rand() % (upperBound - lowerBound + 1.0) + lowerBound;
-            initTimeout=2;
-            // schedule a new timeout event
-            scheduleAt(simTime()+ initTimeout, timeoutEvent);
+            Packet *conPacket = new Packet("CON"); // create a new message to re-send
+            conPacket->setNid(currentID); // re-using current ID number
+            EV << "Re-sending CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
+            send(conPacket, "out"); // send the message out
+            initTimeout=initTimeout*2; // doubling timeout
+            EV << "ACK Timeout for CON packet, ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
+            scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
         }
-        // if ID from ackPacket is NOT the same with current ID
-        else if (currentID != ackPacket->getNid())
+        else // if transmission is more than 4
         {
-            // canceling the timeout event
-            cancelEvent(timeoutEvent);
-            // create a new message to re-send
-            Packet *conPacket = new Packet("CON");
-            // re-using current ID number
-            conPacket->setNid(currentID);
-            // output a log message
-            EV << "Re-sending CON packet, ID: " << conPacket->getNid() << std::endl;
-            // send the message out
-            send(conPacket, "out");
-            // doubling timeout
-            initTimeout=initTimeout*2;
-            // schedule a new timeout event
-            scheduleAt(simTime()+ initTimeout, timeoutEvent);
+            EV << "Retransmission of CON packet, ID: " << currentID << " failed" << std::endl; // output a log message
+            Packet *conPacket = new Packet("CON"); // create a new message to re-send
+            currentID = ++currentID; // incrementing current ID number
+            conPacket->setNid(currentID); // using current ID number
+            EV << "Sending next CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
+            send(conPacket, "out"); // send the message out
+            retransmissionCounter=0; // resetting retransmission counter
+            /*
+             * copier ici le code de Dorian pour random
+             */
+            initTimeout=2.1;
+            EV << "ACK Timeout for CON packet, ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
+            scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
+        }
+    }
+    else // if the message is not the timeout event
+    {
+        Packet *ackPacket = check_and_cast<Packet *>(msg); // receiving ACK Packet
+        if (currentID == ackPacket->getNid()) // if ID from ackPacket is the same with current ID
+        {
+            bubble("ID: OK"); // displaying a bubble
+            EV << "Receiving " << msg->getName() << " packet, ID: " << ackPacket->getNid() << std::endl; // output a log message
+            EV << "ID from " << msg->getName() << " packet: OK" << std::endl; // output confirmation message
+            cancelEvent(timeoutEvent); // canceling the timeout event
+            t2 = simTime().dbl(); // record the time the packet was received
+            rtt = t2 - t1; // calculate the round trip time
+            delete msg; // delete the message
+            Packet *conPacket = new Packet("CON"); // create a new message to send
+            currentID = ++currentID; // incrementing current ID number
+            retransmissionCounter = 0; // resetting retransmission counter
+            conPacket->setNid(currentID); // setting conPacket with the new current ID number
+            EV << "Sending next CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
+            send(conPacket,"out"); // send the message out
+            t1 = simTime().dbl(); // record the time the packet was sent
+            /*
+             * copier ici le code de Dorian pour random
+             */
+            initTimeout=2;
+            EV << "ACK Timeout for CON packet, ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
+            scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
+        }
+        else if (currentID != ackPacket->getNid()) // if ID from ackPacket is NOT the same with current ID
+        {
+            cancelEvent(timeoutEvent); // canceling the timeout event
+            Packet *conPacket = new Packet("CON"); // create a new message to re-send
+            conPacket->setNid(currentID); // re-using current ID number
+            EV << "Re-sending CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
+            send(conPacket, "out"); // send the message out
+            initTimeout=initTimeout*2; // doubling timeout
+            EV << "ACK Timeout for CON packet, ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
+            scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
         }
     }
 }

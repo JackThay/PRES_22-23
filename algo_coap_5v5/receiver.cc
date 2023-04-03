@@ -23,41 +23,27 @@ void Receiver::handleMessage(cMessage *msg)
 {
     if (msg == finTraitement)
     {
-        // creating a message ACK from the received CON
-        Packet *ackPacket = new Packet("ACK");
-        // re-using current ID number
-        ackPacket->setNid(useID);
-        // output a log message
+        Packet *ackPacket = new Packet("ACK"); // creating a message ACK from the received CON
+        ackPacket->setNid(useID); // re-using current ID number
         send (ackPacket,"out"); // Send the ACK message
-        // output a log message
-        EV << "Sending ACK packet, ID: " << ackPacket->getNid() << std::endl;
+        EV << "Sending ACK packet, ID: " << ackPacket->getNid() << std::endl; // output a log message
     }
     else
     {
-        // If processing is not already in progress
-        if(!finTraitement -> isScheduled())
+        if(!finTraitement -> isScheduled()) // If processing is not already in progress
         {
-            // receiving CON packet
-            Packet *conPacket = check_and_cast<Packet *> (msg);
-            // registering ID from CON packet into use
-            useID = conPacket->getNid();
-            // output a log message
-            EV << "Receiving CON packet, ID: " << conPacket->getNid() << std::endl;
-            // displaying bubble
-            bubble("CON received!");
-            // Get the processing delay from the module parameter
-            delta = par("delai");
-            // Print the processing delay to the simulation log
-            EV << "Current processing delay = " << delta << std::endl;
-            // Schedule the processing to be completed after the specified delay
-            scheduleAt(simTime() + delta, finTraitement);
-            // Delete the incoming message since it has been received and processed
-            delete msg;
+            Packet *conPacket = check_and_cast<Packet *> (msg); // receiving CON packet
+            useID = conPacket->getNid(); // registering ID from CON packet into use
+            EV << "Receiving CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
+            bubble("CON received!"); // displaying bubble
+            delta = par("delai"); // Get the processing delay from the module parameter
+            EV << "Current processing delay = " << delta << std::endl; // Print the processing delay to the simulation log
+            scheduleAt(simTime() + delta, finTraitement); // Schedule the processing to be completed after the specified delay
+            delete msg; // Delete the incoming message since it has been received and processed
         }
         else
         {
-            // Delete the incoming message if processing is already in progress
-            delete msg;
+            delete msg; // Delete the incoming message if processing is already in progress
         }
     }
 }
