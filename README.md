@@ -23,5 +23,9 @@ Instruction pour installer le projet:
 
 ### TO DO:
 A faire, dans l'immédiat:
+- Créer un générateur de décimal aléatoire
 - Mesurer la vitesse de téléchargement
-- Utiliser un temps aléatoire pour l'envoi ou le renvoi des paquets conformément à la RFC CoAP: https://www.rfc-editor.org/rfc/rfc7252
+
+A faire, dans un avenir proche:
+- Mettre les identifiants de paquets dans les "bubbles"
+- FUCKING AIMD
