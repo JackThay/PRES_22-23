@@ -1,4 +1,7 @@
 #include "emitter.h"
+#include <random>
+#include <iostream>
+
 
 // register the module with OMNeT++
 Define_Module(Emitter);
@@ -41,15 +44,19 @@ void Emitter::handleMessage(cMessage *msg)
         timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
         EV << "Sending first CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
         /* ==>>Pour Dorian
-         * J'ai besoin d'un nombre "double" aléatoire entre "ACK_TIMEOUT" et "ACK_TIMEOUT * ACK_RANDOM_FACTOR"
-         * ça devrait donner un truc:
+         * J'ai besoin d'un nombre "double" alÃ©atoire entre "ACK_TIMEOUT" et "ACK_TIMEOUT * ACK_RANDOM_FACTOR"
+         * Ã§a devrait donner un truc:
          * maxTimeout = ACK_TIMEOUT * ACK_RANDOM_FACTOR
-         * randomTimeout = valeur aléatoire entre ACK_TIMEOUT et maxTimeout
+         * randomTimeout = valeur alÃ©atoire entre ACK_TIMEOUT et maxTimeout
          */
-
+        maxTimeout = ACK_TIMEOUT * ACK_RANDOM_FACTOR;
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> dis(ACK_TIMEOUT, maxTimeout);
+        randomTimeout = dis(gen);
 
         // ==> Pour Dorian, du coup, tu remplace "2" par randomTimeout pour tester
-        initTimeout = 2; // changing initial timeout
+        initTimeout = randomTimeout; // changing initial timeout
         EV << "ACK Timeout for CON packet, ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
         scheduleAt(simTime() + initTimeout, timeoutEvent); // schedule a new timeout event
     }
@@ -79,7 +86,12 @@ void Emitter::handleMessage(cMessage *msg)
             /*
              * copier ici le code de Dorian pour random
              */
-            initTimeout=2.1;
+            maxTimeout = ACK_TIMEOUT * ACK_RANDOM_FACTOR;
+            std::random_device rd; // create a new random number generator
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<> dis(ACK_TIMEOUT, maxTimeout);
+            randomTimeout = dis(gen);
+            initTimeout= randomTimeout;
             EV << "ACK Timeout for CON packet, ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
             scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
         }
@@ -106,7 +118,12 @@ void Emitter::handleMessage(cMessage *msg)
             /*
              * copier ici le code de Dorian pour random
              */
-            initTimeout=2;
+            maxTimeout = ACK_TIMEOUT * ACK_RANDOM_FACTOR;
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<> dis(ACK_TIMEOUT, maxTimeout);
+            randomTimeout = dis(gen);
+            initTimeout= randomTimeout;
             EV << "ACK Timeout for CON packet, ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
             scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
         }
