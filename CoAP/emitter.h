@@ -27,6 +27,8 @@ class Emitter : public cSimpleModule  // define a new class called "Emitter" tha
     public:
         Emitter();  // default constructor for the Emitter class
         virtual ~Emitter();  // virtual destructor for the Emitter class
+        double randomTimeout;
+        double maxTimeout;
 
     protected:
         virtual void initialize() override;  // override the initialize() method of cSimpleModule
