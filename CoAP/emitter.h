@@ -7,7 +7,9 @@
 #include <cstdlib> // needed to generate random number
 #include <iostream>
 #include <time.h>
+#include <random>
 #include "Packet_m.h"
+#include "shared_function.h"
 
 using namespace omnetpp;  // use the OMNeT++ namespace
 
@@ -27,8 +29,6 @@ class Emitter : public cSimpleModule  // define a new class called "Emitter" tha
     public:
         Emitter();  // default constructor for the Emitter class
         virtual ~Emitter();  // virtual destructor for the Emitter class
-        double randomTimeout;
-        double maxTimeout;
 
     protected:
         virtual void initialize() override;  // override the initialize() method of cSimpleModule
