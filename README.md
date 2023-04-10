@@ -23,8 +23,8 @@ Instruction pour installer le projet:
 
 ### TO DO:
 A faire, dans l'immédiat:
-- Créer un générateur de décimal aléatoire
 - Mesurer la vitesse de téléchargement
+- Routeur acceptant plusieurs clients et plusieurs serveurs
 
 A faire, dans un avenir proche:
 - Mettre les identifiants de paquets dans les "bubbles"
