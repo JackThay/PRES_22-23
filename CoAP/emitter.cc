@@ -1,5 +1,4 @@
 #include "emitter.h"
-#include <iomanip>
 
 // register the module with OMNeT++
 Define_Module(Emitter);
@@ -40,8 +39,9 @@ void Emitter::handleMessage(cMessage *msg)
         t1 = simTime().dbl(); // record the time the packet was sent
         timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
         EV << "Sending first CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
+        std::setprecision(3); // limiting initTimeout to milliseconds
         initTimeout = randomDouble(ACK_TIMEOUT, ACK_TIMEOUT * ACK_RANDOM_FACTOR); // changing initial timeout
-        EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << std::setprecision(3) << initTimeout << std::endl; // output a log message
+        EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
         scheduleAt(simTime() + initTimeout, timeoutEvent); // schedule a new timeout event
     }
     else if(msg == timeoutEvent) // if the message is the timeout event
@@ -55,7 +55,7 @@ void Emitter::handleMessage(cMessage *msg)
             EV << "Re-sending CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
             send(conPacket, "out"); // send the message out
             initTimeout=initTimeout*2; // doubling timeout
-            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << std::setprecision(3) << initTimeout << std::endl; // output a log message
+            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
             scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
         }
         else // if transmission is more than 4
@@ -68,8 +68,9 @@ void Emitter::handleMessage(cMessage *msg)
             send(conPacket, "out"); // send the message out
             t1 = simTime().dbl(); // record the time the packet was sent
             retransmissionCounter=0; // resetting retransmission counter
+            std::setprecision(3); // limiting initTimeout to milliseconds
             initTimeout = randomDouble(ACK_TIMEOUT, ACK_TIMEOUT * ACK_RANDOM_FACTOR); // changing initial timeout
-            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << std::setprecision(3) << initTimeout << std::endl; // output a log message
+            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
             scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
         }
     }
@@ -93,8 +94,9 @@ void Emitter::handleMessage(cMessage *msg)
             EV << "Sending next CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
             send(conPacket,"out"); // send the message out
             t1 = simTime().dbl(); // record the time the packet was sent
+            std::setprecision(3); // limiting initTimeout to milliseconds
             initTimeout = randomDouble(ACK_TIMEOUT, ACK_TIMEOUT * ACK_RANDOM_FACTOR); // changing initial timeout
-            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << std::setprecision(3) << initTimeout << std::endl; // output a log message
+            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
             scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
         }
         else if (currentID != ackPacket->getNid()) // if ID from ackPacket is NOT the same with current ID
@@ -105,7 +107,7 @@ void Emitter::handleMessage(cMessage *msg)
             EV << "Re-sending CON packet, ID: " << conPacket->getNid() << std::endl; // output a log message
             send(conPacket, "out"); // send the message out
             initTimeout=initTimeout*2; // doubling timeout
-            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << std::setprecision(3) << initTimeout << std::endl; // output a log message
+            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << std::endl; // output a log message
             scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
         }
     }
