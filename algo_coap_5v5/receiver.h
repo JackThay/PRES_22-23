@@ -1,6 +1,6 @@
 // Include guard to prevent multiple inclusions of this header file
-#ifndef __ALGO_COAP_RECEIVER_H_
-#define __ALGO_COAP_RECEIVER_H_
+#ifndef __ALGO_COAP_5v5_RECEIVER_H_
+#define __ALGO_COAP_5v5_RECEIVER_H_
 
 // Include the OMNeT++ library
 #include <omnetpp.h>

@@ -48,24 +48,24 @@ network Network
         }
     // Defining the connections between the submodules
     connections:
-        IoT0.out --> DelayChannel --> Router.in_ePort[0];
-        IoT1.out --> DelayChannel --> Router.in_ePort[1];
-        IoT2.out --> DelayChannel --> Router.in_ePort[2];
-        IoT3.out --> DelayChannel --> Router.in_ePort[3];
-        IoT4.out --> DelayChannel --> Router.in_ePort[4];
-        Router.out_ePort[0] --> DelayChannel --> Server0.in;
-        Router.out_ePort[1] --> DelayChannel --> Server1.in;
-        Router.out_ePort[2] --> DelayChannel --> Server2.in;
-        Router.out_ePort[3] --> DelayChannel --> Server3.in;
-        Router.out_ePort[4] --> DelayChannel --> Server4.in;
-        Server0.out --> DelayChannel --> Router.in_rPort[0];
-        Server1.out --> DelayChannel --> Router.in_rPort[1];
-        Server2.out --> DelayChannel --> Router.in_rPort[2];
-        Server3.out --> DelayChannel --> Router.in_rPort[3];
-        Server4.out --> DelayChannel --> Router.in_rPort[4];
-        Router.out_rPort[0] --> DelayChannel --> IoT0.in;
-        Router.out_rPort[1] --> DelayChannel --> IoT1.in;
-        Router.out_rPort[2] --> DelayChannel --> IoT2.in;
-        Router.out_rPort[3] --> DelayChannel --> IoT3.in;
-        Router.out_rPort[4] --> DelayChannel --> IoT4.in;
+        IoT0.out --> DelayChannel {  delay = 0.1s; } --> Router.in_ePort[0];
+        IoT1.out --> DelayChannel {  delay = 0.2s; } --> Router.in_ePort[1];
+        IoT2.out --> DelayChannel {  delay = 0.3s; } --> Router.in_ePort[2];
+        IoT3.out --> DelayChannel {  delay = 0.4s; } --> Router.in_ePort[3];
+        IoT4.out --> DelayChannel {  delay = 0.5s; } --> Router.in_ePort[4];
+        Router.out_ePort[0] --> DelayChannel {  delay = 0.1s; }--> Server0.in;
+        Router.out_ePort[1] --> DelayChannel {  delay = 0.2s; }--> Server1.in;
+        Router.out_ePort[2] --> DelayChannel {  delay = 0.3s; }--> Server2.in;
+        Router.out_ePort[3] --> DelayChannel {  delay = 0.4s; }--> Server3.in;
+        Router.out_ePort[4] --> DelayChannel {  delay = 0.5s; }--> Server4.in;
+        Server0.out --> DelayChannel {  delay = 0.1s; }--> Router.in_rPort[0];
+        Server1.out --> DelayChannel {  delay = 0.2s; }--> Router.in_rPort[1];
+        Server2.out --> DelayChannel {  delay = 0.3s; }--> Router.in_rPort[2];
+        Server3.out --> DelayChannel {  delay = 0.4s; }--> Router.in_rPort[3];
+        Server4.out --> DelayChannel {  delay = 0.5s; }--> Router.in_rPort[4];
+        Router.out_rPort[0] --> DelayChannel {  delay = 0.1s; } --> IoT0.in;
+        Router.out_rPort[1] --> DelayChannel {  delay = 0.2s; } --> IoT1.in;
+        Router.out_rPort[2] --> DelayChannel {  delay = 0.3s; } --> IoT2.in;
+        Router.out_rPort[3] --> DelayChannel {  delay = 0.4s; } --> IoT3.in;
+        Router.out_rPort[4] --> DelayChannel {  delay = 0.5s; } --> IoT4.in;
 }

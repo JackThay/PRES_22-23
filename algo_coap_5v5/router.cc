@@ -23,31 +23,28 @@ void Router::handleMessage(cMessage *msg)
             EV << "Forward data packet...\n";
             if (queue.size() < queue_size) {
                 queue.push(msg);
-                // schedulteAt(simtime + taille data / bandwidth, fintransmission); si queue size = 1
             } else {
                 EV << "Queue full. Dropping packet.\n";
                 bubble("Packet dropped by queue");
                 delete msg;
             }
-        } else if (strcmp("ACK",msg->getName()) == 0){
+        } else {
             EV << "Forward acknowledgment...\n";
             cGate *arrivalGate = msg -> getArrivalGate();
             int arrivalGateIndex = arrivalGate -> getIndex();
             EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
             send(msg, "out_rPort", arrivalGateIndex);
-        } else if (strcmp("finTransmission",msg->getName()) == 0)
-        {
-            cMessage *queuedMsg = (cMessage*)queue.front();
-            EV << "Forwarding queued packet...\n";
-            cGate *arrivalGate = queuedMsg -> getArrivalGate();
-            int arrivalGateIndex = arrivalGate -> getIndex();
-            EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
-            send(queuedMsg, "out_ePort", arrivalGateIndex);
-            queue.pop();
-            // if there are packets in the queue, forward the next one
-            if (!queue.empty()) {
-                // schedulteAt(simtime + taille data / bandwidth, fintransmission);
-            }
         }
+    }
+
+    // if there are packets in the queue, forward the first one
+    if (!queue.empty()) {
+        cMessage *queuedMsg = (cMessage*)queue.front();
+        EV << "Forwarding queued packet...\n";
+        cGate *arrivalGate = queuedMsg -> getArrivalGate();
+        int arrivalGateIndex = arrivalGate -> getIndex();
+        EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
+        send(queuedMsg, "out_ePort", arrivalGateIndex);
+        queue.pop();
     }
 }

@@ -1,5 +1,5 @@
-#ifndef __ALGO_COAP_EMITTER_H_  // header guards, to avoid multiple inclusion of this header
-#define __ALGO_COAP_EMITTER_H_
+#ifndef __ALGO_COAP_5v5_EMITTER_H_  // header guards, to avoid multiple inclusion of this header
+#define __ALGO_COAP_5v5_EMITTER_H_
 
 #include <omnetpp.h>  // include the OMNeT++ header file
 #include <stdio.h>
@@ -7,7 +7,11 @@
 #include <cstdlib> // needed to generate random number
 #include <iostream>
 #include <time.h>
+#include <random>
+#include <iomanip>
 #include "Packet_m.h"
+#include "shared_function.h"
+#include <sstream>
 
 using namespace omnetpp;  // use the OMNeT++ namespace
 
@@ -16,7 +20,9 @@ class Emitter : public cSimpleModule  // define a new class called "Emitter" tha
     private:
         cMessage *timeoutEvent;  // pointer to a message object that will be used to trigger a timeout event
         cMessage *initEvent;
+        int packet_size; // packet size for the experiment
         double rtt, t1, t2;  // variables used to compute the round-trip time of the network
+        int download_speed;
         double ACK_TIMEOUT; // value for an ACK timeout
         double ACK_RANDOM_FACTOR; // value for random factor
         int MAX_RETRANSMIT; // value for max retransmission
