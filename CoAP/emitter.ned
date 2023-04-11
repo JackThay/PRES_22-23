@@ -2,6 +2,7 @@ simple Emitter
 {
     // Declaration of parameters
     parameters:
+        int packet_size; // packet size for the experiment
         //double timeout @unit(s);
     // Declaration of display string for visualization
     @display("i=device/pc");

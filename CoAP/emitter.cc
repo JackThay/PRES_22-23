@@ -17,6 +17,7 @@ Emitter::~Emitter(){
 // called at the beginning of the simulation
 void Emitter::initialize()
 {
+    int packet_size = par("packet_size");
     srand(time(0)); // Use current time as seed for the random number generator
     currentID = rand(); // Initializing current ID with a random number
     ACK_TIMEOUT = 2; // default value for ACK timeout
@@ -26,6 +27,7 @@ void Emitter::initialize()
     retransmissionCounter = 0; // initializing retransmission counter
     initEvent = new cMessage("initEvent"); // create a initial message to send
     scheduleAt(simTime(),initEvent); // schedule the message to be sent immediately
+    EV << "Size is: " << packet_size << "b" << " for each packets." << std::endl; // output a log message
 }
 
 void Emitter::handleMessage(cMessage *msg)
@@ -86,6 +88,8 @@ void Emitter::handleMessage(cMessage *msg)
             t2 = simTime().dbl(); // record the time the packet was received
             rtt = t2 - t1; // calculate the round trip time
             EV << "RTT for packet ID: " << ackPacket->getNid() << " was: " << rtt << "s" << std::endl; // output a log message
+            download_speed = packet_size;
+            EV << "Download speed for packet ID: " << ackPacket->getNid() << " was: " << download_speed << "b/s" << std::endl; // output a log message
             delete msg; // delete the message
             Packet *conPacket = new Packet("CON"); // create a new message to send
             currentID = ++currentID; // incrementing current ID number

@@ -8,3 +8,12 @@ double randomDouble(double lowerLimit, double upperLimit)
     double result = dis(gen);
     return result;
 }
+
+int getDownloadSpeed(double rtt, int packet_size)
+{
+    double factor = 1.0 / rtt;
+    double double_size = packet_size;
+    double speed = double_size * factor;
+    int result = int(double_size);
+    return result;
+}
