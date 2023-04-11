@@ -6,6 +6,7 @@ double randomDouble(double lowerLimit, double upperLimit)
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(lowerLimit, upperLimit);
     double result = dis(gen);
+    std::cout << std::setprecision(3) << std::fixed << result << std::endl;
     return result;
 }
 
