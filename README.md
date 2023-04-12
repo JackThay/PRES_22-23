@@ -22,10 +22,11 @@ Instruction pour installer le projet:
 
 ### TO DO:
 A faire, dans l'immédiat:
-- Remplacer les liens client/routeur routeur/serveur par des liens avec bande passante
+- Adapter la file d'attente routeur pour cPacket
 - FUCKING AIMD
 
 A faire, dans un avenir proche:
+- Faire en sorte que le client et le serveur sonde le lien avant d'envoyer leur paquet
 - Mettre les identifiants de paquets dans les "bubbles"
 - Limiter les temps à des ms
 - Faire un temps de traitement pour le serveur
