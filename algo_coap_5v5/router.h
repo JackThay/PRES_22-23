@@ -13,6 +13,7 @@ class Router : public cSimpleModule // define a class named Router, which inheri
     private:
         double dropping_probability; // probability of dropping packets
         int queue_size; // size of the packet queue
+        int memory; // memorizing transmissionID from packet
         std::queue<cMessage *> queue; // packet queue
     protected:
         virtual void initialize() override; // override the initialize method of cSimpleModule
