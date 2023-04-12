@@ -2,13 +2,27 @@
 
 Define_Module(Router);
 
+// Constructor
+Router::Router()
+{
+    finTraitement = NULL; // Initialize the flag pointer to null
+}
+
+// Destructor
+Router::~Router()
+{
+    cancelAndDelete(finTraitement); // Cancel and delete the flag when the simulation ends
+}
+
+
 void Router::initialize()
 {
     // read parameters from NED file
     dropping_probability = par("dropping_probability");
     queue_size = par("queue_size");
     memory = 0;
-    std::queue<cMessage*> queue;  // initialize the queue
+    cQueue queue;  // initialize the queue
+    finTraitement = new cMessage("finTraitement");
 }
 
 void Router::handleMessage(cMessage *msg)
@@ -23,8 +37,8 @@ void Router::handleMessage(cMessage *msg)
         // forward data packet or acknowledgment depending on packet name
         if (strcmp("CON",msg->getName()) == 0){
             EV << "Forward data packet...\n";
-            if (queue.size() < queue_size) {
-                queue.push(msg);
+            if (queue.getLength() < queue_size) {
+                queue.insert(msg);
             } else {
                 EV << "Queue full. Dropping packet.\n";
                 bubble("Packet dropped by queue");
@@ -41,15 +55,18 @@ void Router::handleMessage(cMessage *msg)
     }
 
     // if there are packets in the queue, forward the first one
-    if (!queue.empty()) {
-        cMessage *queuedMsg = (cMessage*)queue.front();
-        cPacket *transitPacket = check_and_cast<cPacket *>(msg); // receiving a packet
-        memory = transitPacket->getTransmissionId();
-        EV << "Forwarding queued packet...\n";
-        cGate *arrivalGate = queuedMsg -> getArrivalGate();
-        int arrivalGateIndex = arrivalGate -> getIndex();
-        EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
-        send(queuedMsg, SendOptions().transmissionId(memory), "out_ePort", arrivalGateIndex);
-        queue.pop();
+    if (!queue.isEmpty()) {
+            //if(!finTraitement -> isScheduled()){
+                //scheduleAt(simTime() + rand(), finTraitement);
+                cMessage *queuedMsg = (cMessage*)queue.front();
+                cPacket *transitPacket = check_and_cast<cPacket *>(queuedMsg); // receiving a packet
+                memory = transitPacket->getTransmissionId();
+                EV << "Forwarding queued packet...\n";
+                cGate *arrivalGate = queuedMsg -> getArrivalGate();
+                int arrivalGateIndex = arrivalGate -> getIndex();
+                EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
+                queue.pop();
+                send(queuedMsg, SendOptions().transmissionId(memory), "out_ePort", arrivalGateIndex);
+            //}
+        }
     }
-}
