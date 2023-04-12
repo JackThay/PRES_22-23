@@ -1,4 +1,0 @@
-message Packet
-{
-    int nid;
-}
