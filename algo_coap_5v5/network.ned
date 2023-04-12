@@ -1,3 +1,4 @@
+import ned.DatarateChannel;
 import ned.DelayChannel;
 
 // Defining the network Reseau
@@ -48,24 +49,24 @@ network Network
         }
     // Defining the connections between the submodules
     connections:
-        IoT0.out --> DelayChannel {  delay = 0.1s; } --> Router.in_ePort[0];
-        IoT1.out --> DelayChannel {  delay = 0.2s; } --> Router.in_ePort[1];
-        IoT2.out --> DelayChannel {  delay = 0.3s; } --> Router.in_ePort[2];
-        IoT3.out --> DelayChannel {  delay = 0.4s; } --> Router.in_ePort[3];
-        IoT4.out --> DelayChannel {  delay = 0.5s; } --> Router.in_ePort[4];
-        Router.out_ePort[0] --> DelayChannel {  delay = 0.1s; } --> Server0.in;
-        Router.out_ePort[1] --> DelayChannel {  delay = 0.2s; } --> Server1.in;
-        Router.out_ePort[2] --> DelayChannel {  delay = 0.3s; } --> Server2.in;
-        Router.out_ePort[3] --> DelayChannel {  delay = 0.4s; } --> Server3.in;
-        Router.out_ePort[4] --> DelayChannel {  delay = 0.5s; } --> Server4.in;
-        Server0.out --> DelayChannel {  delay = 0.1s; } --> Router.in_rPort[0];
-        Server1.out --> DelayChannel {  delay = 0.2s; } --> Router.in_rPort[1];
-        Server2.out --> DelayChannel {  delay = 0.3s; } --> Router.in_rPort[2];
-        Server3.out --> DelayChannel {  delay = 0.4s; } --> Router.in_rPort[3];
-        Server4.out --> DelayChannel {  delay = 0.5s; } --> Router.in_rPort[4];
-        Router.out_rPort[0] --> DelayChannel {  delay = 0.1s; } --> IoT0.in;
-        Router.out_rPort[1] --> DelayChannel {  delay = 0.2s; } --> IoT1.in;
-        Router.out_rPort[2] --> DelayChannel {  delay = 0.3s; } --> IoT2.in;
-        Router.out_rPort[3] --> DelayChannel {  delay = 0.4s; } --> IoT3.in;
-        Router.out_rPort[4] --> DelayChannel {  delay = 0.5s; } --> IoT4.in;
+        IoT0.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[0];
+        IoT1.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[1];
+        IoT2.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[2];
+        IoT3.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[3];
+        IoT4.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[4];
+        Router.out_ePort[0] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server0.in;
+        Router.out_ePort[1] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server1.in;
+        Router.out_ePort[2] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server2.in;
+        Router.out_ePort[3] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server3.in;
+        Router.out_ePort[4] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server4.in;
+        Server0.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[0];
+        Server1.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[1];
+        Server2.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[2];
+        Server3.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[3];
+        Server4.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[4];
+        Router.out_rPort[0] --> DatarateChannel {  delay = default(0.1s); datarate = default(10000bps); } --> IoT0.in;
+        Router.out_rPort[1] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT1.in;
+        Router.out_rPort[2] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT2.in;
+        Router.out_rPort[3] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT3.in;
+        Router.out_rPort[4] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT4.in;
 }

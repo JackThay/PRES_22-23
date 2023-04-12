@@ -18,7 +18,6 @@ Emitter::~Emitter(){
 void Emitter::initialize()
 {
     int packet_size = par("packet_size");
-    srand(time(0)); // Use current time as seed for the random number generator
     currentID = rand(); // Initializing current ID with a random number
     ACK_TIMEOUT = 2; // default value for ACK timeout
     ACK_RANDOM_FACTOR = 1.5; // default value for random factor
@@ -34,6 +33,7 @@ void Emitter::handleMessage(cMessage *msg)
 {
     if (msg == initEvent) // if the message is the initial event
     {
+        srand(time(0)); // Use current time as seed for the random number generator
         EV << "Emitter initialized" << std::endl; // output message
         cPacket *conPacket = new cPacket("CON"); // create a new packet to send
         conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size

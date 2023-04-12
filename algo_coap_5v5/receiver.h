@@ -4,6 +4,7 @@
 
 // Include the OMNeT++ library
 #include <omnetpp.h>
+#include "shared_function.h"
 
 // Use the OMNeT++ namespace
 using namespace omnetpp;
