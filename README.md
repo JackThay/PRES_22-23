@@ -23,9 +23,9 @@ Instruction pour installer le projet:
 
 ### TO DO:
 A faire, dans l'immédiat:
-- Mesurer la vitesse de téléchargement
-- Routeur acceptant plusieurs clients et plusieurs serveurs
+- FUCKING AIMD
 
 A faire, dans un avenir proche:
 - Mettre les identifiants de paquets dans les "bubbles"
-- FUCKING AIMD
+- Limiter les temps à des ms
+- Faire un temps de traitement pour le serveur
