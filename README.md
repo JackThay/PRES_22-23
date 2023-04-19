@@ -22,7 +22,8 @@ Instruction pour installer le projet:
 
 ### TO DO:
 A faire, dans l'immédiat:
-- Adapter la file d'attente routeur pour cPacket
+- Améliorer le routeur
+- Corriger les timeouts CoAP pour le client
 - FUCKING AIMD
 
 A faire, dans un avenir proche:
