@@ -38,7 +38,7 @@ void Receiver::handleMessage(cMessage *msg)
                 EV << "Receiving CON packet, ID: " << conPacket->getTransmissionId() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
                 useID = conPacket->getTransmissionId();
                 bubble("CON received!"); // displaying bubble
-                delta = randomDouble(0.1,0.5); // Get the processing delay from the module parameter
+                delta = par("delai"); // Get the processing delay from the module parameter
                 EV << "Current processing delay = " << delta << std::endl; // Print the processing delay to the simulation log
                 scheduleAt(simTime() + delta, finTraitement); // Schedule the processing to be completed after the specified delay
                 delete msg; // Delete the incoming message since it has been received and processed

@@ -16,6 +16,7 @@ class Router : public cSimpleModule // define a class named Router, which inheri
         int memory; // memorizing transmissionID from packet
         cQueue queue; // packet queue
         cMessage *finTraitement;
+        cMessage *nextInQueue;
     public:
         Router();                 // Constructor
         virtual ~Router();        // Destructor
