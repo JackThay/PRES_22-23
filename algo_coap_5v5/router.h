@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "shared_function.h"
+#include "Packet_m.h"
 
 using namespace omnetpp;
 

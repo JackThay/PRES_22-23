@@ -10,6 +10,7 @@
 #include <random>
 #include <iomanip>
 #include "shared_function.h"
+#include "Packet_m.h"
 #include <sstream>
 
 using namespace omnetpp;  // use the OMNeT++ namespace

@@ -23,20 +23,21 @@ void Receiver::handleMessage(cMessage *msg)
 {
     if (msg == finTraitement)
     {
-        cPacket *ackPacket = new cPacket("ACK"); // creating a message ACK from the received CON
+        Packet *ackPacket = new Packet("ACK"); // creating a message ACK from the received CON
+        ackPacket->setNid(useID); // setting NID to ID stored in useID
         ackPacket->setBitLength(320); // changing size of packet to typical size of an ACK packet
-        send(ackPacket, SendOptions().transmissionId(useID), "out"); // setting transmissionId to ID copied from conPacket and send the message out
-        EV << "Sending ACK packet, ID: " << ackPacket->getTransmissionId() << ", size : " << ackPacket->getBitLength() << "bit" << std::endl; // output a log message
+        send(ackPacket, "out"); // setting transmissionId to ID copied from conPacket and send the message out
+        EV << "Sending ACK packet, ID: " << ackPacket->getNid() << ", size : " << ackPacket->getBitLength() << "bit" << std::endl; // output a log message
     }
     else
     {
         if(!finTraitement -> isScheduled()) // If processing is not already in progress
         {
-            cPacket *conPacket = check_and_cast<cPacket *> (msg); // receiving a packet
+            Packet *conPacket = check_and_cast<Packet *> (msg); // receiving a packet
             if (strcmp("CON",msg->getName()) == 0) // checking if the incoming message is an CON
             {
-                EV << "Receiving CON packet, ID: " << conPacket->getTransmissionId() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
-                useID = conPacket->getTransmissionId();
+                EV << "Receiving CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
+                useID = conPacket->getNid();
                 bubble("CON received!"); // displaying bubble
                 delta = par("delai"); // Get the processing delay from the module parameter
                 EV << "Current processing delay = " << delta << std::endl; // Print the processing delay to the simulation log

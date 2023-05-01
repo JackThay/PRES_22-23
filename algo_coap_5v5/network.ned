@@ -4,6 +4,9 @@ import ned.DelayChannel;
 // Defining the network Reseau
 network Network
 {
+    // Declaration of parameters
+    parameters:
+        int bandwidth; // packet size for the experiment
     // Defining the submodules of the network
     submodules:
         // Defining an Emitter module with display position (43,48)
@@ -64,7 +67,7 @@ network Network
         Server2.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[2];
         Server3.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[3];
         Server4.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[4];
-        Router.out_rPort[0] --> DatarateChannel {  delay = default(0.1s); datarate = default(10000bps); } --> IoT0.in;
+        Router.out_rPort[0] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT0.in;
         Router.out_rPort[1] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT1.in;
         Router.out_rPort[2] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT2.in;
         Router.out_rPort[3] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT3.in;

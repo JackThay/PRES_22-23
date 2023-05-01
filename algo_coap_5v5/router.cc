@@ -5,13 +5,13 @@ Define_Module(Router);
 // Constructor
 Router::Router()
 {
-    finTraitement = NULL; // Initialize the flag pointer to null
+    nextInQueue = NULL; // Initialize the flag pointer to null
 }
 
 // Destructor
 Router::~Router()
 {
-    cancelAndDelete(finTraitement); // Cancel and delete the flag when the simulation ends
+    cancelAndDelete(nextInQueue); // Cancel and delete the flag when the simulation ends
 }
 
 
@@ -32,27 +32,24 @@ void Router::handleMessage(cMessage *msg)
     {
         if (queue.isEmpty())
         {
-            // cancelEvent(nextinQueue);
-            // delete msg;
-            EV << "Queue empty\n";
+            EV << "Queue size: empty" << std::endl;
         }
         else
         {
             cMessage *queuedMsg = (cMessage*)queue.front();
-            cPacket *queuePacket = check_and_cast<cPacket *>(queuedMsg);
-            EV << "Forwarding queued packet...\n";
+            Packet *queuedPacket = check_and_cast<Packet *>(queuedMsg);
+            EV << "Forwarding next " << queuedMsg->getName() << " packet ID: " << queuedPacket->getNid() << ", size : " << queuedPacket->getBitLength() << "bit" << std::endl; // output a log message
             cGate *arrivalGate = queuedMsg -> getArrivalGate();
             int arrivalGateIndex = arrivalGate -> getIndex();
             EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
             queue.pop();
             send(queuedMsg, "out_ePort", arrivalGateIndex);
             scheduleAt(simTime() + 0.1, nextInQueue);
-            // EV << "Packet length: " << queuePacket->getBitLength() + "\n";
         }
     }
     else // if message is not a self message
     {
-        cPacket *conPacket = check_and_cast<cPacket *>(msg); // casting my packet
+        Packet *transitPacket = check_and_cast<Packet *>(msg); // casting my packet
         if(!nextInQueue -> isScheduled()) // If processing is not already in progress
         {
             if (uniform(0,1) < dropping_probability)
@@ -67,24 +64,24 @@ void Router::handleMessage(cMessage *msg)
                 {
                     if (queue.isEmpty())
                     {
-                        EV << "Forward acknowledgment...\n";
+                        EV << "Forwarding " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit" << std::endl; // output a log message
                         cGate *arrivalGate = msg -> getArrivalGate();
                         int arrivalGateIndex = arrivalGate -> getIndex();
                         EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
                         send(msg, "out_ePort", arrivalGateIndex);
                         scheduleAt(simTime() + 0.1, nextInQueue);
-                        // EV << "Packet length: " << conPacket->getBitLength() + "\n";
                     }
                     else if(!queue.isEmpty())
                     {
-                        if (queue.getLength() < queue_size)
+                        if (queue.getLength() < queue_size) // Queue still has room
                         {
                             queue.insert(msg);
-                            EV << "Queue size:  " << queue.getLength() << std::endl;
+                            EV << "Router busy, queue has room " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit, will be queued" << std::endl; // output a log message
+                            EV << "Queue size: " << queue.getLength() << std::endl;
                         }
-                        else
+                        else // Queue is full
                         {
-                            EV << "Queue full. Dropping packet.\n";
+                            EV << "Router busy, queue is full " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit, will be dropped" << std::endl; // output a log message
                             bubble("Packet dropped by queue");
                             delete msg;
                         }
@@ -92,9 +89,9 @@ void Router::handleMessage(cMessage *msg)
                     }
 
                 }
-                else
+                else // when the packet is not a CON
                 {
-                    EV << "Forward acknowledgment...\n";
+                    EV << "Forwarding " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit" << std::endl; // output a log message
                     cGate *arrivalGate = msg -> getArrivalGate();
                     int arrivalGateIndex = arrivalGate -> getIndex();
                     EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
@@ -107,57 +104,15 @@ void Router::handleMessage(cMessage *msg)
             if (queue.getLength() < queue_size)
             {
                 queue.insert(msg);
-                EV << "Queue size:  " << queue.getLength() << std::endl;
+                EV << "Router busy, queue has room " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit, will be queued" << std::endl; // output a log message
+                EV << "Queue size: " << queue.getLength() << std::endl;
             }
             else
             {
-                EV << "Queue full. Dropping packet.\n";
+                EV << "Router busy, queue is full " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit, will be dropped" << std::endl; // output a log message
                 bubble("Packet dropped by queue");
                 delete msg;
             }
         }
     }
-    /*
-    // randomly drop packet based on configured dropping probability
-    if (uniform(0,1) < dropping_probability){
-        EV << "Drop packet.\n";
-        bubble("packet lost");
-        delete msg;
-    } else {
-        cPacket *transitPacket = check_and_cast<cPacket *>(msg); // receiving a packet
-        // forward data packet or acknowledgment depending on packet name
-        if (strcmp("CON",msg->getName()) == 0){
-            EV << "Forward data packet...\n";
-            if (queue.getLength() < queue_size) {
-                queue.insert(msg);
-            } else {
-                EV << "Queue full. Dropping packet.\n";
-                bubble("Packet dropped by queue");
-                delete msg;
-            }
-        } else {
-            EV << "Forward acknowledgment...\n";
-            memory = transitPacket->getTransmissionId();
-            cGate *arrivalGate = msg -> getArrivalGate();
-            int arrivalGateIndex = arrivalGate -> getIndex();
-            EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
-            send(msg, SendOptions().transmissionId(memory), "out_rPort", arrivalGateIndex);
-        }
-    }
-
-    // if there are packets in the queue, forward the first one
-    if (!queue.isEmpty()) {
-            //if(!finTraitement -> isScheduled()){
-                //scheduleAt(simTime() + rand(), finTraitement);
-                cMessage *queuedMsg = (cMessage*)queue.front();
-                cPacket *transitPacket = check_and_cast<cPacket *>(queuedMsg); // receiving a packet
-                memory = transitPacket->getTransmissionId();
-                EV << "Forwarding queued packet...\n";
-                cGate *arrivalGate = queuedMsg -> getArrivalGate();
-                int arrivalGateIndex = arrivalGate -> getIndex();
-                EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
-                queue.pop();
-                send(queuedMsg, SendOptions().transmissionId(memory), "out_ePort", arrivalGateIndex);
-            //}
-        }*/
 }
