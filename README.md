@@ -14,20 +14,24 @@ Projet de PRES 22-23 Sorbonne Université
 Instruction pour installer le projet:
 * Ouvrez un nouvel espace de travail
 * Créez un nouveau projet vide sous dans votre espace de travail
-* Copiez tout les fichiers .h, .cc, .ned et .ini
+* Copiez tout les fichiers .h, .cc, .ned et .ini et .msg
 * Collez tout les fichiers dans votre nouveau projet vide
-* Allez dans l'onglet "Project", et cliquez sur "Build All"
-* Sélectionnez le fichier "reseau.ned"
+* Allez dans l'onglet "Project", et cliquez sur "Build Project"
+Les fichiers "Packet_M.h" et "Packet_m.cc" vont être compilé (IMPORTANT: vous devez compiler ces fichiers chez vous, les différences de version OMNET++ risquent de provoquer des erreurs)
+* Sélectionnez le fichier "network.ned"
 * Allez dans l'onglet "Run", et cliquez sur "Run As>OMNeT++ Simulation"
 
 ### TO DO:
+Bugs:
+- Le routeur renvoit le ACK au serveur au lieu du client
+
 A faire, dans l'immédiat:
+- Créer dans le routeur un temps de traitements qui correspond à sendingTime = (***Packet->getBitLength() / bandwidth)
 - Améliorer le routeur
-- Corriger les timeouts CoAP pour le client
+- Corriger les timeouts CoAP pour le client (j'ai beau regardé, je vois pas où était le problème)
 - FUCKING AIMD
 
 A faire, dans un avenir proche:
-- Faire en sorte que le client et le serveur sonde le lien avant d'envoyer leur paquet
+- Mettre que 1 seul serveur
 - Mettre les identifiants de paquets dans les "bubbles"
 - Limiter les temps à des ms
-- Faire un temps de traitement pour le serveur
