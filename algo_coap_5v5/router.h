@@ -14,7 +14,6 @@ class Router : public cSimpleModule // define a class named Router, which inheri
     private:
         double dropping_probability; // probability of dropping packets
         int queue_size; // size of the packet queue
-        int memory; // memorizing transmissionID from packet
         cQueue queue; // packet queue
         cMessage *finTraitement;
         cMessage *nextInQueue;

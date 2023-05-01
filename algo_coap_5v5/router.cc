@@ -20,7 +20,6 @@ void Router::initialize()
     // read parameters from NED file
     dropping_probability = par("dropping_probability");
     queue_size = par("queue_size");
-    memory = 0;
     cQueue queue;  // initialize the queue
     finTraitement = new cMessage("finTraitement");
     nextInQueue = new cMessage("nextInQueue");
