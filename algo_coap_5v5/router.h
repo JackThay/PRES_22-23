@@ -4,8 +4,10 @@
 #include <omnetpp.h>
 #include <stdio.h>
 #include <string.h>
+//#include <cdataratechannel.h>
 #include "shared_function.h"
 #include "Packet_m.h"
+
 
 using namespace omnetpp;
 

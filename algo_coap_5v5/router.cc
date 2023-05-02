@@ -66,9 +66,11 @@ void Router::handleMessage(cMessage *msg)
                         EV << "Forwarding " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit" << std::endl; // output a log message
                         cGate *arrivalGate = msg -> getArrivalGate();
                         int arrivalGateIndex = arrivalGate -> getIndex();
+                        //int arrivalGateDatarate = arrivalGate -> cDatarateChannel::getDatarate();
                         EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
                         send(msg, "out_ePort", arrivalGateIndex);
-                        scheduleAt(simTime() + 0.1, nextInQueue);
+                        //EV << "Datarate: " << arrivalGateDatarate << std::endl;
+                        scheduleAt(simTime() + /*transitPacket->getBitLength()/arrivalGateDatarate*/ 0.1, nextInQueue);
                     }
                     else if(!queue.isEmpty())
                     {
@@ -100,18 +102,30 @@ void Router::handleMessage(cMessage *msg)
         }
         else // if nextInQueue is not scheduled
         {
-            if (queue.getLength() < queue_size)
+            if (strcmp("CON",msg->getName()) == 0) // forward data packet or acknowledgment depending on packet name
             {
-                queue.insert(msg);
-                EV << "Router busy, queue has room " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit, will be queued" << std::endl; // output a log message
-                EV << "Queue size: " << queue.getLength() << std::endl;
+                if (queue.getLength() < queue_size)
+                {
+                    queue.insert(msg);
+                    EV << "Router busy, queue has room " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit, will be queued" << std::endl; // output a log message
+                    EV << "Queue size: " << queue.getLength() << std::endl;
+                }
+                else
+                {
+                    EV << "Router busy, queue is full " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit, will be dropped" << std::endl; // output a log message
+                    bubble("Packet dropped by queue");
+                    delete msg;
+                }
             }
-            else
+            else // when the packet is not a CON
             {
-                EV << "Router busy, queue is full " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit, will be dropped" << std::endl; // output a log message
-                bubble("Packet dropped by queue");
-                delete msg;
+                EV << "Forwarding " << msg->getName() << " packet ID: " << transitPacket->getNid() << ", size : " << transitPacket->getBitLength() << "bit" << std::endl; // output a log message
+                cGate *arrivalGate = msg -> getArrivalGate();
+                int arrivalGateIndex = arrivalGate -> getIndex();
+                EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
+                send(msg, "out_rPort", arrivalGateIndex);
             }
+
         }
     }
 }
