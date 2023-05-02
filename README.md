@@ -22,9 +22,6 @@ Les fichiers "Packet_M.h" et "Packet_m.cc" vont être compilé (IMPORTANT: vous 
 * Allez dans l'onglet "Run", et cliquez sur "Run As>OMNeT++ Simulation"
 
 ### TO DO:
-Bugs:
-- Le routeur renvoit le ACK au serveur au lieu du client
-
 A faire, dans l'immédiat:
 - Créer dans le routeur un temps de traitements qui correspond à sendingTime = (***Packet->getBitLength() / bandwidth)
 - Améliorer le routeur
