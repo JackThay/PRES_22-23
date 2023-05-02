@@ -84,7 +84,7 @@ void Emitter::handleMessage(cMessage *msg)
         if (strcmp("ACK",msg->getName()) == 0) // checking if the incoming message is an ACK
         {
             EV << "Receiving " << msg->getName() << " packet, ID: " << ackPacket->getNid() << std::endl; // output a log message
-            if (currentID == ackPacket->getTransmissionId()) // if ID from ackPacket is the same with current ID
+            if (currentID == ackPacket->getNid()) // if ID from ackPacket is the same with current ID
             {
                 bubble("ID: OK"); // displaying a bubble
                 EV << "ID from " << msg->getName() << " packet: OK" << std::endl; // output confirmation message
