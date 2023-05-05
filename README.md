@@ -26,7 +26,8 @@ A faire, dans l'immédiat:
 - Créer dans le routeur un temps de traitements qui correspond à sendingTime = (***Packet->getBitLength() / bandwidth)
 - Améliorer le routeur
 - Corriger les timeouts CoAP pour le client (j'ai beau regardé, je vois pas où était le problème)
-- FUCKING AIMD
+- Tester IDC-CoAP (AIMD)
+- Développer BBR
 
 A faire, dans un avenir proche:
 - Mettre que 1 seul serveur
