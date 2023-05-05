@@ -48,14 +48,13 @@ void Emitter::handleMessage(cMessage *msg)
         start_spacing = t1; // record the start of spacing
         timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
         EV << "Sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
-        std::setprecision(3); // limiting initTimeout to milliseconds
         initTimeout = randomDouble(ACK_TIMEOUT, ACK_TIMEOUT * ACK_RANDOM_FACTOR); // changing initial timeout
         EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
         scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
     }
     else if(msg == timeoutEvent) // if the message is the timeout event
     {
-        EV << "Timeout expired, CON packet is probably lost.\n"; // output a log message
+        EV << "Spacing elapsed, retransmitting.\n"; // output a log message
         retransmissionCounter = ++retransmissionCounter; // incrementing retransmission counter
         if (retransmissionCounter <= MAX_RETRANSMIT) // if transmission is less or equal than 4
         {
@@ -69,7 +68,7 @@ void Emitter::handleMessage(cMessage *msg)
             send(conPacket, "out"); // setting transmissionId to currentID and send the message out
             start_spacing = simTime().dbl(); // recording new start of pacing
             EV << "Re-sending CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
-            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
+            EV << "Spacing before next transmission/re-transmission after this CON packet ID: " << conPacket->getNid() << " is: " << spacing << "s" << std::endl; // output a log message
             scheduleAt(simTime()+ spacing, timeoutEvent); // schedule a new timeout event based on spacing
         }
         else // if transmission is more than 4
@@ -88,7 +87,7 @@ void Emitter::handleMessage(cMessage *msg)
             EV << "Sending next CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
             t1 = simTime().dbl(); // record the time the packet was sent
             retransmissionCounter = 0; // resetting retransmission counter
-            EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
+            EV << "Spacing before next transmission/re-transmission after this CON packet ID: " << conPacket->getNid() << " is: " << spacing << "s" << std::endl; // output a log message
             scheduleAt(simTime()+ spacing, timeoutEvent); // schedule a new timeout event
         }
     }
@@ -124,8 +123,7 @@ void Emitter::handleMessage(cMessage *msg)
                 EV << "Sending next CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
                 t1 = simTime().dbl(); // record the time the packet was sent
                 start_spacing = simTime().dbl(); // recording new start of pacing
-                std::setprecision(3); // limiting initTimeout to milliseconds
-                EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
+                EV << "Spacing before next transmission/re-transmission after this CON packet ID: " << conPacket->getNid() << " is: " << spacing << "s" << std::endl; // output a log message
                 scheduleAt(simTime()+ spacing, timeoutEvent); // schedule a new timeout event
             }
             else if (currentID != ackPacket->getNid()) // if ID from ackPacket is NOT the same with current ID
@@ -141,7 +139,7 @@ void Emitter::handleMessage(cMessage *msg)
                 send(conPacket, "out"); // send the message out
                 start_spacing = simTime().dbl(); // recording new start of pacing
                 EV << "Re-sending CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
-                EV << "ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
+                EV << "Spacing before next transmission/re-transmission after this CON packet ID: " << conPacket->getNid() << " is: " << spacing << "s" << std::endl; // output a log message
                 scheduleAt(simTime()+ spacing, timeoutEvent); // schedule a new timeout event
             }
 
