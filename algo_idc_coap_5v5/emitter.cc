@@ -26,7 +26,7 @@ void Emitter::initialize()
     loss_spacing = 0; // space between last transmission an last timeout
     dw = 0.01; // decremental weight
     fw = 0.5; // fast decremental weight
-    iw 1.5; // incremental weight
+    iw = 1.5; // incremental weight
     initTimeout = 0; // initializing initial timeout
     retransmissionCounter = 0; // initializing retransmission counter
     initEvent = new cMessage("initEvent"); // create a initial message to send
