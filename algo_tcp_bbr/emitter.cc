@@ -41,7 +41,7 @@ void Emitter::handleMessage(cMessage *msg)
 
     if (cycleIndex == 0)
     {
-        pg = "ACK" ? 0.75 : 1.25;
+        pg = !"ACK" ? 0.75 : 1.25;
     }
     else if (cycleIndex == 1)
     {
