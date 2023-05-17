@@ -6,7 +6,7 @@ network Network
 {
     // Declaration of parameters
     parameters:
-        int bandwidth; // packet size for the experiment
+        int bandwidth @unit(bps); // packet size for the experiment
     // Defining the submodules of the network
     submodules:
         // Defining an Emitter module with display position (43,48)
@@ -52,24 +52,24 @@ network Network
         }
     // Defining the connections between the submodules
     connections:
-        IoT0.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[0];
-        IoT1.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[1];
-        IoT2.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[2];
-        IoT3.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[3];
-        IoT4.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_ePort[4];
-        Router.out_ePort[0] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server0.in;
-        Router.out_ePort[1] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server1.in;
-        Router.out_ePort[2] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server2.in;
-        Router.out_ePort[3] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server3.in;
-        Router.out_ePort[4] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Server4.in;
-        Server0.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[0];
-        Server1.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[1];
-        Server2.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[2];
-        Server3.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[3];
-        Server4.out --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> Router.in_rPort[4];
-        Router.out_rPort[0] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT0.in;
-        Router.out_rPort[1] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT1.in;
-        Router.out_rPort[2] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT2.in;
-        Router.out_rPort[3] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT3.in;
-        Router.out_rPort[4] --> DatarateChannel {  delay = default(0.1s);datarate = default(10000bps); } --> IoT4.in;
+        IoT0.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_ePort[0];
+        IoT1.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_ePort[1];
+        IoT2.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_ePort[2];
+        IoT3.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_ePort[3];
+        IoT4.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_ePort[4];
+        Router.out_ePort[0] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Server0.in;
+        Router.out_ePort[1] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Server1.in;
+        Router.out_ePort[2] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Server2.in;
+        Router.out_ePort[3] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Server3.in;
+        Router.out_ePort[4] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Server4.in;
+        Server0.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_rPort[0];
+        Server1.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_rPort[1];
+        Server2.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_rPort[2];
+        Server3.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_rPort[3];
+        Server4.out --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> Router.in_rPort[4];
+        Router.out_rPort[0] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> IoT0.in;
+        Router.out_rPort[1] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> IoT1.in;
+        Router.out_rPort[2] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> IoT2.in;
+        Router.out_rPort[3] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> IoT3.in;
+        Router.out_rPort[4] --> DatarateChannel {  delay = default(0.1s);datarate = parent.bandwidth; } --> IoT4.in;
 }
