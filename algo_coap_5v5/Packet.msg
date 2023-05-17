@@ -1,6 +1,6 @@
 message Packet extends cPacket
 {
-    int nid;
-    int AddDestination;
-    int AddSource;
+    int nid; // "number ID" used to identify packet
+    int AddDestination; // not used for now
+    int AddSource; // not used for now
 }

@@ -20,14 +20,16 @@ class Emitter : public cSimpleModule  // define a new class called "Emitter" tha
     private:
         cMessage *timeoutEvent;  // pointer to a message object that will be used to trigger a timeout event
         cMessage *initEvent;
+        cMessage *getUploadSpeed;
+        int clientID; // used to ID client if there's several
+        int currentID; // value for message ID
         int packet_size; // packet size for the experiment
+        int packet_sent; // number of packet sent in a second
         double rtt, t1, t2;  // variables used to compute the round-trip time of the network
-        int download_speed;
         double ACK_TIMEOUT; // value for an ACK timeout
         double ACK_RANDOM_FACTOR; // value for random factor
         int MAX_RETRANSMIT; // value for max retransmission
         double initTimeout; // parameter for storing timeout
-        int currentID; // value for message ID
         int retransmissionCounter; // counter for retransmission
 
     public:

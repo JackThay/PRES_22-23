@@ -20,6 +20,7 @@ void Router::initialize()
     // read parameters from NED file
     dropping_probability = par("dropping_probability");
     queue_size = par("queue_size");
+    timeBeforeSend = par("timeBeforeSend");
     cQueue queue;  // initialize the queue
     finTraitement = new cMessage("finTraitement");
     nextInQueue = new cMessage("nextInQueue");
@@ -43,7 +44,7 @@ void Router::handleMessage(cMessage *msg)
             EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
             queue.pop();
             send(queuedMsg, "out_ePort", arrivalGateIndex);
-            scheduleAt(simTime() + 0.1, nextInQueue);
+            scheduleAt(simTime() + par("timeBeforeSend"), nextInQueue);
         }
     }
     else // if message is not a self message
@@ -70,7 +71,7 @@ void Router::handleMessage(cMessage *msg)
                         EV << "Packet arrived from gate " + std::to_string(arrivalGateIndex) + "\n";
                         send(msg, "out_ePort", arrivalGateIndex);
                         //EV << "Datarate: " << arrivalGateDatarate << std::endl;
-                        scheduleAt(simTime() + /*transitPacket->getBitLength()/arrivalGateDatarate*/ 0.1, nextInQueue);
+                        scheduleAt(simTime() + /*transitPacket->getBitLength()/arrivalGateDatarate*/ par("timeBeforeSend"), nextInQueue);
                     }
                     else if(!queue.isEmpty())
                     {

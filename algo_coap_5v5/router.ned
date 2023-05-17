@@ -3,6 +3,7 @@ simple Router
     // Define the parameters that can be set in the NED file
     parameters:
         double dropping_probability; // The probability of dropping packets that exceed the queue size
+        double timeBeforeSend; // waiting time before sending next packet
         int queue_size; // The maximum size of the queue
     // Define the module's appearance in the NED file
     @display("i=abstract/router");

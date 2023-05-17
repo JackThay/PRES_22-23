@@ -9,5 +9,4 @@
 #include <random>
 
 double randomDouble(double lowerLimit, double upperLimit);
-int getDownloadSpeed(double rtt, int size);
 double calculateRTO(double rtt, bool isSpurious);
