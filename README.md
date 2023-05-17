@@ -26,8 +26,9 @@ A faire, dans l'immédiat:
 - Créer dans le routeur un temps de traitements qui correspond à sendingTime = (***Packet->getBitLength() / bandwidth)
 - Améliorer le routeur
 - Corriger les timeouts CoAP pour le client (j'ai beau regardé, je vois pas où était le problème)
-- Tester IDC-CoAP (AIMD)
-- Développer BBR
+- Recréer (AIMD)
+- Adapter le BBR de Thierry a notre architecture de code
+- Faire en sorte que bandwidth modifie VRAIMENT la bande passante dans "network.ned"
 
 A faire, dans un avenir proche:
 - Mettre que 1 seul serveur
