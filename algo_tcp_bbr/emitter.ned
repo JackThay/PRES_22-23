@@ -2,7 +2,7 @@ simple Emitter
 {
     // Declaration of parameters
     parameters:
-        int packet_size; // packet size for the experiment
+        int packet_size @unit(bps); // packet size for the experiment
         int m = default(8); // Size of the sliding window
         double timeout = default(1s) @unit(s); // Timeout value
         // Declaration of display string for visualization
