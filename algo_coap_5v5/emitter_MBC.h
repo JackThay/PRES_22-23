@@ -29,6 +29,10 @@ class Emitter_MBC : public cSimpleModule
     double pg;
     double spacing;
 
+  public:
+      Emitter_MBC();  // default constructor for the Emitter class
+      virtual ~Emitter_MBC();  // virtual destructor for the Emitter class
+
   protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;

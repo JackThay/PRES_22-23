@@ -2,6 +2,17 @@
 
 Define_Module(Emitter_MBC);
 
+// Constructor
+Emitter_MBC::Emitter_MBC()
+{
+    nextPacket = NULL;
+}
+
+// Destructor
+Emitter_MBC::~Emitter_MBC(){
+    cancelAndDelete(nextPacket);
+}
+
 void Emitter_MBC::initialize()
 {
     packet_size = par("packet_size");
@@ -16,7 +27,7 @@ void Emitter_MBC::initialize()
     ACK_TIMEOUT = 2; // default value for ACK timeout
     ACK_RANDOM_FACTOR = 1.5; // default value for random factor
     initTimeout = randomDouble(ACK_TIMEOUT, ACK_TIMEOUT * ACK_RANDOM_FACTOR); // initializing initial timeout
-    spacing = initTimeout; // Seriously, I don't know what value we're supposed to write down here
+    spacing = 0.002; // Seriously, I don't know what value we're supposed to write down here
     packet_sent= 1; // 1 because the 1st packet is sent immediately
     retransmission = true; // only an ACK can change this value to false
 
@@ -26,21 +37,23 @@ void Emitter_MBC::initialize()
     conPacket->setNid(currentID); // setting NID to current ID
     conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
     send(conPacket, "out");
-    timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
+    //timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
     EV << "Emitter number: " << clientID << " => Sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
     EV << "Emitter number: " << clientID << " => ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
-    scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
+    //scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
+    getUploadSpeed = new cMessage("getUploadSpeed");
+    scheduleAt(simTime()+1,getUploadSpeed);
 }
 
 void Emitter_MBC::handleMessage(cMessage *msg)
 {
     srand(time(0)); // Use current time as seed for the random number generator
     double currentTime = simTime().dbl();
-    if(strcmp("timeoutEvent",msg->getName()) == 0) // in case the first packet never make it to destination
+    /*if(strcmp("timeoutEvent",msg->getName()) == 0) // in case the first packet never make it to destination
     {
-        /* This will only work for the 1st retransmission
-         * the second retransmission will crash the simulation !
-         */
+        // This will only work for the 1st retransmission
+        // the second retransmission will crash the simulation !
+        //
         delete msg; // delete the message
         Packet *conPacket = new Packet("CON"); // create a new packet to send
         conPacket->setNid(currentID); // setting NID to current ID
@@ -51,7 +64,7 @@ void Emitter_MBC::handleMessage(cMessage *msg)
         EV << "Emitter number: " << clientID << " => Re-sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
         EV << "Emitter number: " << clientID << " => ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
         scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
-    }
+    }*/
     if(strcmp("getUploadSpeed",msg->getName()) == 0)
     {
         delete msg; // delete the message
@@ -87,7 +100,7 @@ void Emitter_MBC::handleMessage(cMessage *msg)
     }
 
     double nextSendTime = std::max(lastSendTime + spacing, currentTime);
-    nextPacket = new cMessage("nextPacket");
+    nextPacket = new Packet("nextPacket");
     scheduleAt(nextSendTime, nextPacket);
     lastSendTime = nextSendTime;
 
@@ -110,7 +123,7 @@ void Emitter_MBC::handleMessage(cMessage *msg)
 
     if (strcmp("nextPacket",msg->getName()) == 0) // when self message is "nextPacket"
     {
-        delete msg; // delete the message
+        //delete msg; // delete the message
         if (retransmission == false)
             currentID = ++currentID; // incrementing current ID number if retransmission is false
         Packet *conPacket = new Packet("CON"); // create a new packet to send
