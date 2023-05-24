@@ -10,7 +10,6 @@ class Emitter_MBC : public cSimpleModule
 {
   private:
     cMessage *timeoutEvent;  // pointer to a message object that will be used to trigger a timeout event
-    cMessage *initEvent;
     cMessage *nextPacket;
     cMessage *getUploadSpeed;
     int clientID; // used to ID client if there's several

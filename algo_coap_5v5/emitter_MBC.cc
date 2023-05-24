@@ -26,14 +26,32 @@ void Emitter_MBC::initialize()
     conPacket->setNid(currentID); // setting NID to current ID
     conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
     send(conPacket, "out");
-    EV << "Emitter number: " << clientID << " => sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
+    timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
+    EV << "Emitter number: " << clientID << " => Sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
     EV << "Emitter number: " << clientID << " => ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
+    scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
 }
 
 void Emitter_MBC::handleMessage(cMessage *msg)
 {
     srand(time(0)); // Use current time as seed for the random number generator
     double currentTime = simTime().dbl();
+    if(strcmp("timeoutEvent",msg->getName()) == 0) // in case the first packet never make it to destination
+    {
+        /* This will only work for the 1st retransmission
+         * the second retransmission will crash the simulation !
+         */
+        delete msg; // delete the message
+        Packet *conPacket = new Packet("CON"); // create a new packet to send
+        conPacket->setNid(currentID); // setting NID to current ID
+        conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
+        send(conPacket, "out");
+        lastSendTime = currentTime;
+        timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
+        EV << "Emitter number: " << clientID << " => Re-sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
+        EV << "Emitter number: " << clientID << " => ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
+        scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
+    }
     if(strcmp("getUploadSpeed",msg->getName()) == 0)
     {
         delete msg; // delete the message
