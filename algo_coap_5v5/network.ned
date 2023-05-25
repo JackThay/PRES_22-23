@@ -15,6 +15,7 @@ network Network
         // Regular CoAP -> Emitter_COAP
         // IDC-CoAP -> Emitter_IDC
         // MBC-CoAP -> Emitter_MBC
+        // Generic -> Emitter (generic emitter with no console message)
         
         // Defining an Emitter module with display position (43,48)
         IoT0: Emitter_COAP { // <== This is where you change the emitter

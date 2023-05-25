@@ -28,7 +28,8 @@ void Emitter_MBC::initialize()
     ACK_RANDOM_FACTOR = 1.5; // default value for random factor
     initTimeout = randomDouble(ACK_TIMEOUT, ACK_TIMEOUT * ACK_RANDOM_FACTOR); // initializing initial timeout
     spacing = 0.664; // Seriously, I don't know what value we're supposed to write down here
-    packet_sent= 0; // 1 because the 1st packet is sent immediately
+    packet_sent= 1; // 1 because the 1st packet is sent immediately
+    ack_received = 0;
     retransmission = true; // only an ACK can change this value to false
 
     // Here start the code we usually use from "initEvent" of regular CoAP
@@ -50,10 +51,9 @@ void Emitter_MBC::handleMessage(cMessage *msg)
     if(strcmp("getUploadSpeed",msg->getName()) == 0)
     {
         delete msg; // delete the message
-        int upload_speed = packet_size * packet_sent;
         EV << "Emitter number: " << clientID << " => This is a time counter: " << simTime().dbl()<< "s" << std::endl;
-        EV << "Emitter number: " << clientID << " => Upload speed: " << upload_speed << "bits/s"<< std::endl;
-        packet_sent = 0; // resetting number of packet sent
+        EV << "Emitter number: " << clientID << " => Total packet sent: " << packet_sent << std::endl;
+        EV << "Emitter number: " << clientID << " => Total ACK received: " << ack_received << std::endl;
         getUploadSpeed = new cMessage("getUploadSpeed");
         scheduleAt(simTime()+1,getUploadSpeed);
     }
@@ -65,7 +65,7 @@ void Emitter_MBC::handleMessage(cMessage *msg)
         {
             bubble("ID: OK"); // displaying a bubble
             EV << "Emitter number: " << clientID << " => ID from " << msg->getName() << " packet: OK" << std::endl; // output confirmation message
-            packet_sent = ++packet_sent; // used to count the number of packet sent in a second
+            ack_received = ++ack_received;
             retransmission = false;
         }
         else
@@ -113,6 +113,7 @@ void Emitter_MBC::handleMessage(cMessage *msg)
         conPacket->setNid(currentID); // setting NID to current ID
         conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
         send(conPacket, "out");
+        packet_sent = ++packet_sent; // used to count the number of packet sent in a second
         retransmission = true; // only an ACK can change this value to false
         EV << "Emitter number: " << clientID << " => sending next CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
     }

@@ -20,10 +20,12 @@ void Emitter_COAP::initialize()
     packet_size = par("packet_size");
     clientID = rand(); // used to ID client if there is several
     currentID = rand(); // Initializing current ID with a random number
-    packet_sent = 0; // counter for the number of packet sent and its ACK
+    packet_sent = 0; // counter for the number of packet sent
     ACK_TIMEOUT = 2; // default value for ACK timeout
     ACK_RANDOM_FACTOR = 1.5; // default value for random factor
     MAX_RETRANSMIT = 4; // default value for retransmission
+    packet_sent = 0;
+    ack_received = 0;
     initTimeout = 0; // initializing initial timeout
     retransmissionCounter = 0; // initializing retransmission counter
     initEvent = new cMessage("initEvent"); // create a initial message to send
@@ -44,6 +46,7 @@ void Emitter_COAP::handleMessage(cMessage *msg)
         conPacket->setNid(currentID); // setting NID to current ID
         conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
         send(conPacket, "out"); // setting transmissionId to currentID and send the message out
+        packet_sent = ++packet_sent;
         t1 = simTime().dbl(); // record the time the packet was sent
         timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
         EV << "Emitter number: " << clientID << " => Sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
@@ -54,10 +57,9 @@ void Emitter_COAP::handleMessage(cMessage *msg)
     else if(msg == getUploadSpeed)
     {
         delete msg; // delete the message
-        int upload_speed = packet_size * packet_sent;
         EV << "Emitter number: " << clientID << " => This is a time counter: " << simTime().dbl()<< "s" << std::endl;
-        EV << "Emitter number: " << clientID << " => Upload speed: " << upload_speed << "bits/s"<< std::endl;
-        packet_sent = 0; // resetting number of packet sent
+        EV << "Emitter number: " << clientID << " => Total packet sent: " << packet_sent << std::endl;
+        EV << "Emitter number: " << clientID << " => Total ACK received: " << ack_received << std::endl;
         getUploadSpeed = new cMessage("getUploadSpeed");
         scheduleAt(simTime()+1,getUploadSpeed);
     }
@@ -71,6 +73,7 @@ void Emitter_COAP::handleMessage(cMessage *msg)
             conPacket->setNid(currentID); // setting NID to current ID
             conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
             send(conPacket, "out"); // setting transmissionId to currentID and send the message out
+            packet_sent = ++packet_sent;
             EV << "Emitter number: " << clientID << " => Re-sending CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
             initTimeout=initTimeout*2; // doubling timeout
             EV << "Emitter number: " << clientID << " => ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
@@ -84,6 +87,7 @@ void Emitter_COAP::handleMessage(cMessage *msg)
             conPacket->setNid(currentID); // setting NID to new current ID
             conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
             send(conPacket, "out"); // setting transmissionId to currentID and send the message out
+            packet_sent = ++packet_sent;
             EV << "Emitter number: " << clientID << " => Sending next CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
             t1 = simTime().dbl(); // record the time the packet was sent
             retransmissionCounter = 0; // resetting retransmission counter
@@ -103,7 +107,7 @@ void Emitter_COAP::handleMessage(cMessage *msg)
                 bubble("ID: OK"); // displaying a bubble
                 EV << "Emitter number: " << clientID << " => ID from " << msg->getName() << " packet: OK" << std::endl; // output confirmation message
                 cancelEvent(timeoutEvent); // canceling the timeout event
-                packet_sent = ++packet_sent; // used to count the number of ACK received in a second
+                ack_received = ++ack_received;
                 t2 = simTime().dbl(); // record the time the packet was received
                 rtt = t2 - t1; // calculate the round trip time
                 currentID = ++currentID; // incrementing current ID number
@@ -114,6 +118,7 @@ void Emitter_COAP::handleMessage(cMessage *msg)
                 conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
                 retransmissionCounter = 0; // resetting retransmission counter
                 send(conPacket, "out"); // setting transmissionId to currentID and send the message out
+                packet_sent = ++packet_sent;
                 EV << "Emitter number: " << clientID << " => Sending next CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
                 t1 = simTime().dbl(); // record the time the packet was sent
                 initTimeout = randomDouble(ACK_TIMEOUT, ACK_TIMEOUT * ACK_RANDOM_FACTOR); // changing initial timeout
@@ -128,6 +133,7 @@ void Emitter_COAP::handleMessage(cMessage *msg)
                 conPacket->setNid(currentID); // setting NID to current ID
                 conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
                 send(conPacket, "out"); // send the message out
+                packet_sent = ++packet_sent;
                 EV << "Emitter number: " << clientID << " => Re-sending CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
                 initTimeout=initTimeout*2; // doubling timeout
                 EV << "Emitter number: " << clientID << " => ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message

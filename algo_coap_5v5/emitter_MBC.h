@@ -15,7 +15,8 @@ class Emitter_MBC : public cSimpleModule
     int clientID; // used to ID client if there's several
     int currentID; // value for message ID
     int packet_size; // packet size for the experiment
-    int packet_sent; // number of packet sent in a second
+    int packet_sent; // number of packet sent
+    int ack_received; // number of ack received
     double ACK_TIMEOUT; // value for an ACK timeout
     double ACK_RANDOM_FACTOR; // value for random factor
     double initTimeout; // parameter for storing timeout
