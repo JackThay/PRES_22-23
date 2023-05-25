@@ -28,7 +28,6 @@ Les fichiers "Packet_M.h" et "Packet_m.cc" vont être compilé (IMPORTANT: vous 
 ### Modifier la topologie réseau pour 1 client et 1 serveur
 * Dans le dossier "option routeur 1v1", vous trouverez un fichier "network.ned"
 * Copiez ce fichier et remplacez le "network.ned" présent dans le dossier "projet n4"
-* Attention, faites une copie de "network.ned" dans le dossier "projet n4" si vous voulez revenir à une topologie 5 clients et 5 serveurs
 
 ### BUGS:
 - Il arrive que les émetteurs ont des comportements non programmés, comme par exemple CoAP qui tente de "caster" un self-message, cela arrive quand les émetteurs utilisent des algorithmes différents entre eux
