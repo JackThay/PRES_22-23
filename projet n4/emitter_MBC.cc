@@ -27,7 +27,7 @@ void Emitter_MBC::initialize()
     ACK_TIMEOUT = 2; // default value for ACK timeout
     ACK_RANDOM_FACTOR = 1.5; // default value for random factor
     initTimeout = randomDouble(ACK_TIMEOUT, ACK_TIMEOUT * ACK_RANDOM_FACTOR); // initializing initial timeout
-    spacing = 0.664; // Seriously, I don't know what value we're supposed to write down here
+    spacing = 0.7; // Seriously, I don't know what value we're supposed to write down here
     packet_sent= 1; // 1 because the 1st packet is sent immediately
     ack_received = 0;
     retransmission = true; // only an ACK can change this value to false
@@ -39,7 +39,7 @@ void Emitter_MBC::initialize()
     conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
     send(conPacket, "out");
     EV << "Emitter number: " << clientID << " => Sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
-    EV << "Emitter number: " << clientID << " => ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
+    EV << "Emitter number: " << clientID << " => Spacing for CON packet ID: " << conPacket->getNid() << " is: " << spacing << "s (user-defined)" << std::endl; // output a log message
     getUploadSpeed = new cMessage("getUploadSpeed");
     scheduleAt(simTime()+1,getUploadSpeed);
 }

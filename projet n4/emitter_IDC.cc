@@ -40,7 +40,7 @@ void Emitter_IDC::handleMessage(cMessage *msg)
         t1 = simTime().dbl(); // record the time the packet was sent
         last_send_time = simTime().dbl(); // recording time of last sending
         EV << "Emitter number: " << clientID << " => Sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
-        EV << "Emitter number: " << clientID << " => Spacing for CON packet ID: " << conPacket->getNid() << " is: " << spacing << "s" << std::endl; // output a log message
+        EV << "Emitter number: " << clientID << " => Spacing for CON packet ID: " << conPacket->getNid() << " is: " << spacing << "s (user-defined)" << std::endl; // output a log message
         sendPacket = new cMessage("sendPacket");
         scheduleAt(last_send_time + spacing, sendPacket);
     }
