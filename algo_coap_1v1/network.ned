@@ -6,7 +6,7 @@ network Network
 {
     // Declaration of parameters
     parameters:
-        int bandwidth; // packet size for the experiment
+        int bandwidth @unit(bps); // packet size for the experiment
     // Defining the submodules of the network
     submodules:
         // Defining an Emitter module with display position (43,48)
@@ -28,8 +28,8 @@ network Network
         }
     // Defining the connections between the submodules
     connections:
-        IoT0.out --> DatarateChannel {  delay = default(0.1s); datarate = default(10000bps); } --> Router.in_ePort[0];
-        Router.out_ePort[0] --> DatarateChannel {  delay = default(0.1s); datarate = default(10000bps); } --> Server0.in;
-        Server0.out --> DatarateChannel {  delay = default(0.1s); datarate = default(10000bps); } --> Router.in_rPort[0];
-        Router.out_rPort[0] --> DatarateChannel {  delay = default(0.1s); datarate = default(10000bps); } --> IoT0.in;
+        IoT0.out --> DatarateChannel {  delay = default(0.1s); datarate = parent.bandwidth; } --> Router.in_ePort[0];
+        Router.out_ePort[0] --> DatarateChannel {  delay = default(0.1s); datarate = parent.bandwidth; } --> Server0.in;
+        Server0.out --> DatarateChannel {  delay = default(0.1s); datarate = parent.bandwidth; } --> Router.in_rPort[0];
+        Router.out_rPort[0] --> DatarateChannel {  delay = default(0.1s); datarate = parent.bandwidth; } --> IoT0.in;
 }
