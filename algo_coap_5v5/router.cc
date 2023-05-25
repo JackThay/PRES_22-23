@@ -22,7 +22,6 @@ void Router::initialize()
     queue_size = par("queue_size");
     timeBeforeSend = par("timeBeforeSend");
     cQueue queue;  // initialize the queue
-    finTraitement = new cMessage("finTraitement");
     nextInQueue = new cMessage("nextInQueue");
 }
 

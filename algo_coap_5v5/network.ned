@@ -12,12 +12,12 @@ network Network
         // IoT0 is used for testing the congestion control algorithms, other IoT will be using regular CoAP
         // This is to ensure every network environnement stays the same between each simulations
         // change IoT0 according to the test you're planning:
-        // Regular CoAP -> Emitter
+        // Regular CoAP -> Emitter_COAP
         // IDC-CoAP -> Emitter_IDC
         // MBC-CoAP -> Emitter_MBC
         
         // Defining an Emitter module with display position (43,48)
-        IoT0: Emitter_MBC { // <== This is where you change the emitter
+        IoT0: Emitter_COAP { // <== This is where you change the emitter
             @display("p=43,48;i=device/pocketpc");
         }
         // Defining a Receiver module with display position (410,48)

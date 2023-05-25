@@ -27,8 +27,8 @@ void Emitter_MBC::initialize()
     ACK_TIMEOUT = 2; // default value for ACK timeout
     ACK_RANDOM_FACTOR = 1.5; // default value for random factor
     initTimeout = randomDouble(ACK_TIMEOUT, ACK_TIMEOUT * ACK_RANDOM_FACTOR); // initializing initial timeout
-    spacing = 0.002; // Seriously, I don't know what value we're supposed to write down here
-    packet_sent= 1; // 1 because the 1st packet is sent immediately
+    spacing = 0.664; // Seriously, I don't know what value we're supposed to write down here
+    packet_sent= 0; // 1 because the 1st packet is sent immediately
     retransmission = true; // only an ACK can change this value to false
 
     // Here start the code we usually use from "initEvent" of regular CoAP
@@ -37,10 +37,8 @@ void Emitter_MBC::initialize()
     conPacket->setNid(currentID); // setting NID to current ID
     conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
     send(conPacket, "out");
-    //timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
     EV << "Emitter number: " << clientID << " => Sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
     EV << "Emitter number: " << clientID << " => ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
-    //scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
     getUploadSpeed = new cMessage("getUploadSpeed");
     scheduleAt(simTime()+1,getUploadSpeed);
 }
@@ -49,22 +47,6 @@ void Emitter_MBC::handleMessage(cMessage *msg)
 {
     srand(time(0)); // Use current time as seed for the random number generator
     double currentTime = simTime().dbl();
-    /*if(strcmp("timeoutEvent",msg->getName()) == 0) // in case the first packet never make it to destination
-    {
-        // This will only work for the 1st retransmission
-        // the second retransmission will crash the simulation !
-        //
-        delete msg; // delete the message
-        Packet *conPacket = new Packet("CON"); // create a new packet to send
-        conPacket->setNid(currentID); // setting NID to current ID
-        conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
-        send(conPacket, "out");
-        lastSendTime = currentTime;
-        timeoutEvent = new cMessage("timeoutEvent"); // create a timeout
-        EV << "Emitter number: " << clientID << " => Re-sending first CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
-        EV << "Emitter number: " << clientID << " => ACK Timeout for CON packet ID: " << conPacket->getNid() << " is: " << initTimeout << "s" << std::endl; // output a log message
-        scheduleAt(simTime()+ initTimeout, timeoutEvent); // schedule a new timeout event
-    }*/
     if(strcmp("getUploadSpeed",msg->getName()) == 0)
     {
         delete msg; // delete the message
@@ -83,6 +65,7 @@ void Emitter_MBC::handleMessage(cMessage *msg)
         {
             bubble("ID: OK"); // displaying a bubble
             EV << "Emitter number: " << clientID << " => ID from " << msg->getName() << " packet: OK" << std::endl; // output confirmation message
+            packet_sent = ++packet_sent; // used to count the number of packet sent in a second
             retransmission = false;
         }
         else
@@ -123,7 +106,7 @@ void Emitter_MBC::handleMessage(cMessage *msg)
 
     if (strcmp("nextPacket",msg->getName()) == 0) // when self message is "nextPacket"
     {
-        //delete msg; // delete the message
+        //delete msg; // somehow, deleting the message here will crash the simulation
         if (retransmission == false)
             currentID = ++currentID; // incrementing current ID number if retransmission is false
         Packet *conPacket = new Packet("CON"); // create a new packet to send
@@ -131,7 +114,6 @@ void Emitter_MBC::handleMessage(cMessage *msg)
         conPacket->setBitLength(par("packet_size")); // changing size of packet to chosen size
         send(conPacket, "out");
         retransmission = true; // only an ACK can change this value to false
-        packet_sent = ++packet_sent; // used to count the number of packet sent in a second
         EV << "Emitter number: " << clientID << " => sending next CON packet, ID: " << conPacket->getNid() << ", size : " << conPacket->getBitLength() << "bit" << std::endl; // output a log message
     }
 }

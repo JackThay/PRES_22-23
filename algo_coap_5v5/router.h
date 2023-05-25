@@ -18,7 +18,6 @@ class Router : public cSimpleModule // define a class named Router, which inheri
         int queue_size; // size of the packet queue
         double timeBeforeSend; // Time to wait before sending next packet, should be packet size/bandwidth
         cQueue queue; // packet queue
-        cMessage *finTraitement;
         cMessage *nextInQueue;
     public:
         Router();                 // Constructor
