@@ -12,7 +12,7 @@ Projet de PRES 22-23 Sorbonne Université
 
 ### Installation
 Instruction pour installer le projet:
-* Ouvrez un nouvel espace de travail
+* Ouvrez un nouvel espace de travail sous OMNET++
 * Créez un nouveau projet vide sous dans votre espace de travail
 * Copiez tout les fichiers .h, .cc, .ned et .ini et .msg
 * Collez tout les fichiers dans votre nouveau projet vide
@@ -21,16 +21,14 @@ Les fichiers "Packet_M.h" et "Packet_m.cc" vont être compilé (IMPORTANT: vous 
 * Sélectionnez le fichier "network.ned"
 * Allez dans l'onglet "Run", et cliquez sur "Run As>OMNeT++ Simulation"
 
-### TO DO:
-A faire, dans l'immédiat:
-- Créer dans le routeur un temps de traitements qui correspond à sendingTime = (***Packet->getBitLength() / bandwidth)
-- Améliorer le routeur
-- Corriger les timeouts CoAP pour le client (j'ai beau regardé, je vois pas où était le problème)
-- Recréer (AIMD)
-- Adapter le BBR de Thierry a notre architecture de code
-- Faire en sorte que bandwidth modifie VRAIMENT la bande passante dans "network.ned"
+### Modifier l'algorithme chargé dans l'émetteur
+* Ouvrez le fichier "network.ned"
+* Ligne 21, "IoT0 : Emitter_XXX", remplacez "XXX" par l'algorithme souhaité
 
-A faire, dans un avenir proche:
-- Mettre que 1 seul serveur
-- Mettre les identifiants de paquets dans les "bubbles"
-- Limiter les temps à des ms
+### Modifier la topologie réseau pour 1 client et 1 serveur
+* Dans le dossier "option routeur 1v1", vous trouverez un fichier "network.ned"
+* Copiez ce fichier et remplacez le "network.ned" présent dans le dossier "projet n4"
+* Attention, faites une copie de "network.ned" dans le dossier "projet n4" si vous voulez revenir à une topologie 5 clients et 5 serveurs
+
+### BUGS:
+- Il arrive que les émetteurs ont des comportements non programmés, comme par exemple CoAP qui tente de "caster" un self-message, cela arrive quand les émetteurs utilisent des algorithmes différents entre eux
